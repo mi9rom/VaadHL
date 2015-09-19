@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: 
-
+Implementation-Title: VaadHL
+Implementation-Version: 1.0.13
+Vaadin-Package-Version: 1
