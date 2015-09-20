@@ -57,4 +57,12 @@ public class TestPermChecker implements IWinPermChecker{
 	public boolean canDelete(String winId) {
 		return get(winId).isCanDelete();
 	}
+
+	@Override
+	public boolean canDo(String winId, String actionId) {
+		if(actionId.equals(WinPermCheckerBin.canDoId))
+			return get(winId).isCanDo();
+		else
+			return false;
+	}
 }

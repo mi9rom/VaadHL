@@ -26,16 +26,22 @@ import com.vaadHL.window.base.perm.IWinPermChecker;
  */
 public class WinPermCheckerBin  {
 
+	
+
 	boolean canOpen = false;
 	boolean canEdit = false;
 	boolean canCreate = false;
 	boolean canDelete = false;
+	// canDo testing
+	boolean canDo = false; 
+	public final static String canDoId = "CANDO";
 
 	public void fromSet(Set<Integer> s) {
 		canOpen = false;
 		canEdit = false;
 		canCreate = false;
 		canDelete = false;
+		canDo = false; 
 
 		for (Object n : s) {
 			int iv = (int) n;
@@ -51,6 +57,9 @@ public class WinPermCheckerBin  {
 				break;
 			case 3:
 				canDelete = true;
+				break;
+			case 4:
+				canDo = true;
 				break;
 			default:
 				break;
@@ -103,5 +112,11 @@ public class WinPermCheckerBin  {
 		this.canDelete = canDelete;
 	}
 
+	public boolean isCanDo() {
+		return canDo;
+	}
 
+	public void setCanDo(boolean canDo) {
+		this.canDo = canDo;
+	}
 }

@@ -50,6 +50,12 @@ public class PermAndChecker implements IWinPermChecker {
 		return c1.canDelete(winId) && c2.canDelete(winId);
 	}
 
+	@Override
+	public boolean canDo(String winId, String actionId) {
+
+		return c1.canDo(winId, actionId);
+	}
+
 	
 
 }

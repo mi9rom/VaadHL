@@ -57,6 +57,10 @@ public class MWinPermChecker implements IWinPermChecker {
 		return pch.canDelete(winId) && pch.canDelete(lWinId); 
 	}
 
+	@Override
+	public boolean canDo(String winId, String actionId) {
+		return pch.canDo(winId, actionId);
+	}
 	
 	
 	

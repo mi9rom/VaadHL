@@ -26,14 +26,14 @@ public interface IWinPermChecker {
 	/**
 	 * Is there permission to open the window.
 	 * 
-	 * @param winId
+	 * @param winId the window identifier
 	 */
 	public boolean canOpen(String winId);
 
 	/**
 	 * Is there permission for editing in the window.
 	 * 
-	 * @param winId
+	 * @param winId the window identifier
 	 * @return
 	 */
 	public boolean canEdit(String winId);
@@ -41,7 +41,7 @@ public interface IWinPermChecker {
 	/**
 	 * Is there permission for creating in the window.
 	 * 
-	 * @param winId
+	 * @param winId the window identifier
 	 * @return
 	 */
 	public boolean canCreate(String winId);
@@ -49,9 +49,16 @@ public interface IWinPermChecker {
 	/**
 	 * Is there permission for deleting in the window.
 	 * 
-	 * @param winId
+	 * @param winId the window identifier
 	 * @return
 	 */
 	public boolean canDelete(String winId);
 
+	/**
+	 * Is there permission for the action 
+	 * @param winId the window identifier
+	 * @param actionId the id of the action to check 
+	 * @return
+	 */
+	public boolean canDo(String winId,String actionId);
 }
