@@ -13,49 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.vaadHL.window.base.perm;
 
 /**
- * Window level permission checking interface.
- * 
+ * General window checking interface
  * @author Miroslaw Romaniuk
  *
  */
-public interface IWinPermChecker extends IPermChecker {
+public interface IPermChecker {
 	/**
-	 * Is there permission to open the window.
+	 * Is there permission for the action
 	 * 
 	 * @param winId
 	 *            the window identifier
-	 */
-	public boolean canOpen(String winId);
-
-	/**
-	 * Is there permission for editing in the window.
-	 * 
-	 * @param winId
-	 *            the window identifier
+	 * @param actionId
+	 *            the id of the action to check
 	 * @return
 	 */
-	public boolean canEdit(String winId);
-
-	/**
-	 * Is there permission for creating in the window.
-	 * 
-	 * @param winId
-	 *            the window identifier
-	 * @return
-	 */
-	public boolean canCreate(String winId);
-
-	/**
-	 * Is there permission for deleting in the window.
-	 * 
-	 * @param winId
-	 *            the window identifier
-	 * @return
-	 */
-	public boolean canDelete(String winId);
-
+	public boolean canDo(String winId, String actionId);
 }
