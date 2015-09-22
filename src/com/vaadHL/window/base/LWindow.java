@@ -16,9 +16,11 @@
 
 package com.vaadHL.window.base;
 
+import com.vaadHL.utl.action.Action;
+import com.vaadHL.utl.action.Action.Command;
+import com.vaadHL.utl.action.ActionGroup;
+import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.utl.msgs.IMsgs;
-import com.vaadHL.window.base.BaseListWindow.ChoosingMode;
-import com.vaadHL.window.base.ICustomizeListWindow.DoubleClickAc;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -28,7 +30,7 @@ import com.vaadin.ui.HorizontalLayout;
 
 /**
  * List window.<br>
- * = {@link BaseListWindow} + bottom area buttons 
+ * = {@link BaseListWindow} + bottom area buttons
  * 
  * @author Miroslaw Romaniuk
  *
@@ -46,8 +48,6 @@ public class LWindow extends BaseListWindow {
 	protected Button btEdit = null;
 	protected Button btView = null;
 
-	
-	
 	public LWindow(String winId, String caption, IWinPermChecker permChecker,
 			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
 			boolean readOnly, IMsgs msgs) {
@@ -64,6 +64,10 @@ public class LWindow extends BaseListWindow {
 		btDelete = new Button("Delete");
 		btEdit = new Button("Edit");
 		btView = new Button("View");
+
+		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
+		ActionGroup readOnlyActions = new ActionGroup(200002);
+		Action ac;
 
 		btOk.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -4027804800730671542L;
@@ -98,41 +102,39 @@ public class LWindow extends BaseListWindow {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				details();
-				
 
 			}
 		});
 
-		btAdd.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -6260434736494673567L;
-           
+		ac = new Action(ActionsIds.AC_CREATE, new Command() {
+
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				add();
-				
 			}
-		});
+		}, btAdd);
+		newActions.put(ac);
+		readOnlyActions.put(ac);
 
-		btDelete.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = 2589075267689608411L;
+		ac = new Action(ActionsIds.AC_DELETE, new Command() {
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				delete();
 			}
+		}, btDelete);
+		newActions.put(ac);
+		readOnlyActions.put(ac);
 
-			
-		});
-
-		btEdit.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = 2493584539912040786L;
+		ac = new Action(ActionsIds.AC_EDIT, new Command() {
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				edit();
-				
 			}
-		});
+		}, btEdit);
+		newActions.put(ac);
+		readOnlyActions.put(ac);
 
 		btView.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -7738495347949482479L;
@@ -140,12 +142,15 @@ public class LWindow extends BaseListWindow {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				view();
-				
+
 			}
 		});
 
+		addActionsAndChkPerm(newActions);
+		if (isReadOnlyWin()) {
+			readOnlyActions.setEnabled(false);
+		}
 	}
-	
 
 	/**
 	 * Creates ( does not display) panel containing default window buttons
@@ -155,7 +160,6 @@ public class LWindow extends BaseListWindow {
 	public Component makeButtonsPanel() {
 		HorizontalLayout bottPanel = new HorizontalLayout();
 
-	
 		if (isDetailsFunc())
 			bottPanel.addComponent(btDetails);
 		if (isAddFunc())
@@ -166,22 +170,6 @@ public class LWindow extends BaseListWindow {
 			bottPanel.addComponent(btEdit);
 		if (isViewFunc())
 			bottPanel.addComponent(btView);
-
-		if (isReadOnlyWin()) {
-			btDetails.setEnabled(false);
-			btAdd.setEnabled(false);
-			btDelete.setEnabled(false);
-			btEdit.setEnabled(false);
-		}
-
-		if (permChecker != null) {
-			if (!permChecker.canCreate(getWinId()))
-				btAdd.setEnabled(false);
-			if (!permChecker.canDelete(getWinId()))
-				btDelete.setEnabled(false);
-			if (!permChecker.canEdit(getWinId()))
-				btEdit.setEnabled(false);
-		}
 
 		if (getChooseMode() == ChoosingMode.NO_CHOOSE) {
 			bottPanel.addComponent(btClose);
@@ -201,6 +189,4 @@ public class LWindow extends BaseListWindow {
 		return makeButtonsPanel();
 	}
 
-	
-	
 }

@@ -58,8 +58,8 @@ public class MWinPermChecker implements IWinPermChecker {
 	}
 
 	@Override
-	public boolean canDo(String winId, String actionId) {
-		return pch.canDo(winId, actionId);
+	public boolean canDo(String winId, int actionId) {
+		return pch.canDo(winId, actionId) && pch.canDo(lWinId, actionId); 
 	}
 	
 	

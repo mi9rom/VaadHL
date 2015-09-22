@@ -16,6 +16,10 @@
 
 package com.vaadHL.window.base;
 
+import com.vaadHL.utl.action.Action;
+import com.vaadHL.utl.action.Action.Command;
+import com.vaadHL.utl.action.ActionGroup;
+import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.ui.Button;
@@ -75,24 +79,24 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		});
 
-		btNextRec.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -126742841511297625L;
+		// new actions added
+		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
+
+		newActions.put(new Action(ActionsIds.AC_PREV_ITM, new Command() {
 
 			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				moveToNextRecordChk();
-			}
-		});
-
-		btPrevRec.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -6612432787611519817L;
-
-			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
+			public void run(Action action) {
 				moveToPrevRecordChk();
 			}
+		}, btPrevRec));
 
-		});
+		newActions.put(new Action(ActionsIds.AC_NEXT_ITM, new Command() {
+
+			@Override
+			public void run(Action action) {
+				moveToNextRecordChk();
+			}
+		}, btNextRec));
 
 		btCancel.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -7802414620464909596L;
@@ -132,41 +136,34 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		});
 
-		btDelete.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = 726940831676037620L;
+		newActions.put(new Action(ActionsIds.AC_DELETE, new Command() {
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				deleteAskMsg();
-
 			}
-		});
+		}, btDelete));
 
-		btAdd.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = 5194123651061486740L;
+		newActions.put(new Action(ActionsIds.AC_CREATE, new Command() {
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				createAskMsg();
 			}
-		});
-
-		btEdit.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -5141223393911623763L;
+		}, btAdd));
+		
+		newActions.put(new Action(ActionsIds.AC_EDIT, new Command() {
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void run(Action action) {
 				toggleEditing();
-
 			}
-		});
+		}, btEdit));
+		
+		addActionsAndChkPerm(newActions);
 
 	}
 
-	
-	
-	
-	
 	/**
 	 * Toggles the editing state of the window.
 	 */
@@ -184,19 +181,9 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 		if (getLaunchMode() == MWLaunchMode.VIEW_EDIT) {
 
 			bottPanel.addComponent(btAdd);
-			if (permChecker != null)
-				if (!permChecker.canCreate(getWinId()))
-					btAdd.setEnabled(false);
-
 			bottPanel.addComponent(btDelete);
-			if (permChecker != null)
-				if (!permChecker.canDelete(getWinId()))
-					btDelete.setEnabled(false);
-
 			bottPanel.addComponent(btEdit);
-			if (permChecker != null)
-				if (!permChecker.canEdit(getWinId()))
-					btEdit.setEnabled(false);
+			
 		}
 
 		// record move buttons
@@ -290,27 +277,6 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 	public void setShowOKCancel(boolean showOKCancel) {
 		this.showOKCancel = showOKCancel;
 	}
-
-	/*	*//*
-		 * Sets the window components enabled state.
-		 * 
-		 * @param enabled
-		 * 
-		 * @return TRUE - operation performed
-		 */
-	/*
-	 * protected boolean setFwCompEnabled(boolean enabled) { //
-	 * btAdd.setEnabled(enabled); // btDelete.setEnabled(enabled); return true;
-	 * 
-	 * }
-	 * 
-	 * @Override protected boolean disableEdit() {
-	 * 
-	 * return setFwCompEnabled(false); }
-	 * 
-	 * @Override protected boolean enableEdit() { return setFwCompEnabled(true);
-	 * }
-	 */
 
 	@Override
 	public boolean setEditModeChkMsg(boolean editMode) {

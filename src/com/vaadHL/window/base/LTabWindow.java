@@ -119,7 +119,7 @@ public class LTabWindow extends LWindow {
 		if (rowId instanceof Set) {
 			if (((Set<?>) rowId).size() != 1) {
 				getMsgs().showInfo(
-						"TVHL-012: Only single selection is permitted.");
+						"VHL-012: Only single selection is permitted.");
 				return null;
 			} else {
 				rowId = (((Set<?>) rowId).toArray())[0];

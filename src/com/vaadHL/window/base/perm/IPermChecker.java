@@ -30,5 +30,5 @@ public interface IPermChecker {
 	 *            the id of the action to check
 	 * @return
 	 */
-	public boolean canDo(String winId, String actionId);
+	public boolean canDo(String winId, int actionId);
 }

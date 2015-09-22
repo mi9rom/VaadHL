@@ -683,6 +683,7 @@ public abstract class BaseEditWindow extends BaseWindow implements
 		return launchMode;
 	}
 
+	@SuppressWarnings("unused")
 	private void setLaunchMode(MWLaunchMode launchMode) {
 		this.launchMode = launchMode;
 	}

@@ -51,7 +51,7 @@ public class PermAndChecker implements IWinPermChecker {
 	}
 
 	@Override
-	public boolean canDo(String winId, String actionId) {
+	public boolean canDo(String winId, int actionId) {
 
 		return c1.canDo(winId, actionId);
 	}

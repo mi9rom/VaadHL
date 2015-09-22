@@ -16,6 +16,7 @@
 
 package com.vaadHL.window.base;
 
+import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.utl.msgs.Msgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
@@ -44,14 +45,7 @@ public abstract class BaseWindow extends Window {
 	 */
 	protected boolean approvedToOpen = true;
 	private IMsgs msgs = null;
-
-	public IMsgs getMsgs() {
-		return msgs;
-	}
-
-	public void setMsgs(IMsgs msgs) {
-		this.msgs = msgs;
-	}
+	private ActionGroup actions;
 
 	/**
 	 * Creates a new base window. Sets the title.
@@ -138,6 +132,21 @@ public abstract class BaseWindow extends Window {
 	 */
 	protected void setWinID(String winID) {
 		this.winId = winID;
+	}
+
+	public IMsgs getMsgs() {
+		return msgs;
+	}
+
+	public void setMsgs(IMsgs msgs) {
+		this.msgs = msgs;
+	}
+
+	public ActionGroup getActions() {
+		if (actions == null) {
+			actions = new ActionGroup(ActionGroup.AC_ROOT);
+		}
+		return actions;
 	}
 
 	/**
@@ -258,10 +267,32 @@ public abstract class BaseWindow extends Window {
 	}
 
 	/**
-	 * If necessery, inside constructor objects creation. Only create , don't bind data e.t.c
+	 * If necessery, inside constructor objects creation. Only create , don't
+	 * bind data e.t.c
 	 */
 	public void initConstructorWidgets() {
 
+	}
+
+	/**
+	 * Adds action group to the window actions.
+	 * 
+	 * @param ag
+	 */
+	protected void addActions(ActionGroup ag) {
+		getActions().put(ag);
+	}
+
+	/**
+	 * Adds action group to the window actions and set its state using
+	 * permission checker.
+	 * 
+	 * @param ag
+	 *            the action group
+	 */
+	protected void addActionsAndChkPerm(ActionGroup ag) {
+		getActions().put(ag);
+		ag.setPermisions(getWinId(), permChecker);
 	}
 
 }

@@ -20,7 +20,7 @@ package com.vaadHL;
  * Version information.
  */
 public class Version {
-	private final static String version = "1.0.14";
+	private final static String version = "1.1.00";
 
 	/**
 	 * Gets full version string.
