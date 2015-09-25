@@ -18,7 +18,7 @@ package com.vaadHL.window.EM;
 
 import javax.persistence.EntityManager;
 
-import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.AppContext;
 import com.vaadHL.window.base.ICustomizeLWMultiMode;
 import com.vaadHL.window.base.IListSelectionAction;
 import com.vaadHL.window.base.LTabWindow;
@@ -39,10 +39,12 @@ public class LEMWindow extends LTabWindow {
 
 	public LEMWindow(String winId, String caption, IWinPermChecker permChecker,
 			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
-			boolean readOnly, EntityManager em, IMsgs msgs, IListSelectionAction selAction) {
-		super(winId, caption, permChecker, customize, chooseMode,readOnly,  msgs,selAction);
+			boolean readOnly, EntityManager em, AppContext appContext,
+			IListSelectionAction selAction) {
+		super(winId, caption, permChecker, customize, chooseMode, readOnly,
+				appContext, selAction);
 		this.em = em;
 		if (approvedToOpen == false)
-			return;	
+			return;
 	}
 }

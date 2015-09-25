@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 
-import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.AppContext;
 import com.vaadHL.window.base.FWindow;
 import com.vaadHL.window.base.ICustomizeFWin;
 import com.vaadHL.window.base.MWLaunchMode;
@@ -55,9 +55,10 @@ public abstract class SingIeItemFWindow extends FWindow {
 	public SingIeItemFWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeFWin cust,
 			MWLaunchMode launchMode, EntityManager em,
-			LazyEntityContainer<?> container, Object itemId, IMsgs msgs,
-			boolean readOnlyW) {
-		super(winId, caption, permChecker, cust, launchMode, msgs, readOnlyW);
+			LazyEntityContainer<?> container, Object itemId,
+			AppContext appContext, boolean readOnlyW) {
+		super(winId, caption, permChecker, cust, launchMode, appContext,
+				readOnlyW);
 		if (!approvedToOpen)
 			return;
 		this.em = em;
@@ -94,7 +95,7 @@ public abstract class SingIeItemFWindow extends FWindow {
 			return;
 		Item item = container.getItem(itId);
 		if (item == null) {
-			getMsgs().showError("VHL-002: the item is null.");
+			getMsgs().showError("VHL-002: " + getI18S("MVHL-002"));
 		} else {
 			curItId = itId;
 			bind(item);
@@ -115,7 +116,7 @@ public abstract class SingIeItemFWindow extends FWindow {
 		Object id = container.prevItemId(curItId);
 		if (id == null)
 			return;
-		bindId(id);		
+		bindId(id);
 		setDefaultEditingMode();
 	}
 
@@ -213,7 +214,7 @@ public abstract class SingIeItemFWindow extends FWindow {
 			create();
 		else {
 			if (itemId == null) {
-				getMsgs().showError("Empty record Id");
+				getMsgs().showError(getI18S("MVHL-020"));
 				// close(); doesn't work here
 			} else
 				bindId(itemId);

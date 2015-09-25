@@ -16,9 +16,12 @@
 
 package com.vaadHL.window.base;
 
+import java.util.MissingResourceException;
+
+import com.vaadHL.AppContext;
+import com.vaadHL.i18n.I18Sup;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.msgs.IMsgs;
-import com.vaadHL.utl.msgs.Msgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -38,14 +41,15 @@ import com.vaadin.ui.Window;
 public abstract class BaseWindow extends Window {
 
 	private static final long serialVersionUID = 3460211791860318900L;
-	private String winId = null;
-	protected IWinPermChecker permChecker = null;
+	private String winId;
+	protected IWinPermChecker permChecker;
 	/**
 	 * Can window be opened in a normal way.
 	 */
-	protected boolean approvedToOpen = true;
-	private IMsgs msgs = null;
+	protected boolean approvedToOpen;
+
 	private ActionGroup actions;
+	private AppContext appContext;
 
 	/**
 	 * Creates a new base window. Sets the title.
@@ -55,26 +59,20 @@ public abstract class BaseWindow extends Window {
 	 * @param caption
 	 *            the part of the title {@link BaseWindow#makeTitle makeTitle}
 	 * @param permChecker
-	 *            the permission checker
-	 * @param msgs
-	 *            the user notifications helper
 	 */
 	public BaseWindow(String winId, String caption,
-			IWinPermChecker permChecker, IMsgs msgs) {
+			IWinPermChecker permChecker, AppContext appContext) {
 		super();
-		if (msgs != null)
-			setMsgs(msgs);
-		else
-			this.msgs = new Msgs();
+		this.appContext = appContext;
 		this.winId = winId;
 		this.permChecker = permChecker;
 		setCaption(makeTitle(winId, caption));
 		if (!canShow()) {
 			approvedToOpen = false;
-			setNotPermitedContent(winId
-					+ "- You have NO permission to open this window");
+			setNotPermitedContent(winId + "- " + getI18S("MVHL-021"));
 		} else
-			initConstructorWidgets();
+			approvedToOpen = true;
+		initConstructorWidgets();
 	}
 
 	/**
@@ -87,7 +85,7 @@ public abstract class BaseWindow extends Window {
 	protected void setNotPermitedContent(String msg) {
 
 		Button btClose = null;
-		btClose = new Button("Close");
+		btClose = new Button(getI18S("btClose"));
 		btClose.addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = -1610492227149824003L;
@@ -135,12 +133,40 @@ public abstract class BaseWindow extends Window {
 	}
 
 	public IMsgs getMsgs() {
-		return msgs;
+		return appContext.getMsgs();
 	}
 
-	public void setMsgs(IMsgs msgs) {
-		this.msgs = msgs;
+	public I18Sup getI18() {
+		return appContext.getI18();
 	}
+
+	/**
+	 * Gets localized string, if not found returns ?@param name?
+	 * 
+	 * @param name
+	 *            the property name
+	 * @return
+	 */
+	public String getI18S(String name) {
+
+		return appContext.getI18().getStringNE(name);
+
+	}
+	
+	/**
+	 * Gets localized array of string
+	 * 
+	 * @param name
+	 *            the property name
+	 * @return
+	 */
+	public String[] getI18AS(String name) {
+
+		return appContext.getI18().getArryString(name);
+
+	}
+
+	
 
 	public ActionGroup getActions() {
 		if (actions == null) {
@@ -159,21 +185,6 @@ public abstract class BaseWindow extends Window {
 			if (!permChecker.canOpen(winId))
 				return false;
 		return true;
-	}
-
-	/**
-	 * Checks if there is permission to show the window. If not, shows the
-	 * message.
-	 * 
-	 * @return true = permitted to show
-	 */
-	public boolean canShowMsg() {
-		if (!canShow()) {
-			msgs.showInfo(winId
-					+ "- You have NO permission to open this window");
-			return false;
-		} else
-			return true;
 	}
 
 	/**
@@ -293,6 +304,10 @@ public abstract class BaseWindow extends Window {
 	protected void addActionsAndChkPerm(ActionGroup ag) {
 		getActions().put(ag);
 		ag.setPermisions(getWinId(), permChecker);
+	}
+
+	public AppContext getAppContext() {
+		return appContext;
 	}
 
 }

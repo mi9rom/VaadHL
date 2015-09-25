@@ -18,7 +18,7 @@ package com.vaadHL.window.base;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
-import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.AppContext;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 
 /**
@@ -45,8 +45,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 
 	public BaseEditWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeEditWin cust,
-			MWLaunchMode launchMode, IMsgs msgs, boolean readOnlyW) {
-		super(winId, caption, permChecker, msgs);
+			MWLaunchMode launchMode, AppContext appContext, boolean readOnlyW) {
+		super(winId, caption, permChecker, appContext);
 		if (!approvedToOpen)
 			return;
 		this.setReadOnlyWin(readOnlyW);
@@ -60,27 +60,26 @@ public abstract class BaseEditWindow extends BaseWindow implements
 
 			} else {
 				approvedToOpen = false;
-				setNotPermitedContent(getWinId()
-						+ "- Operation not permitted in the read-only mode");
+				setNotPermitedContent(getWinId() + "VHL-015: "
+						+ getI18S("MVHL-015"));
 				return;
 			}
 		}
 
 		if (this.launchMode == MWLaunchMode.EDIT && !hasEditPerm()) {
 			approvedToOpen = false;
-			setNotPermitedContent(getWinId()
-					+ "- You have NO permission to Edit in this window");
+			setNotPermitedContent(getWinId() + "VHL-016: "
+					+ getI18S("MVHL-016"));
 			return;
 		} else if (this.launchMode == MWLaunchMode.DELETE && !hasDeletePerm()) {
 			approvedToOpen = false;
-			setNotPermitedContent(getWinId()
-					+ "- You have NO permission to Delete in this window");
+			setNotPermitedContent(getWinId() + "VHL-017: "
+					+ getI18S("MVHL-017"));
 			return;
 		} else if (this.launchMode == MWLaunchMode.NEW_REC && !hasCreatePerm()) {
 			approvedToOpen = false;
-			setNotPermitedContent(getWinId()
-					+ "- You have NO permission to Create in this window");
-			return;
+			setNotPermitedContent(getWinId() + "VHL-018: "
+					+ getI18S("MVHL-018"));
 		}
 
 		customize(cust);
@@ -147,15 +146,15 @@ public abstract class BaseEditWindow extends BaseWindow implements
 	/**
 	 * Validates the content before saving changes.<br>
 	 * Show a message or inform a user other way.
-	 * @param showMessages do show validation messages
+	 * 
+	 * @param showMessages
+	 *            do show validation messages
 	 * @return true - OK
 	 */
 	public boolean validateSave(boolean showMessages) {
 		return true;
 	}
 
-	
-	
 	/**
 	 * Saves changes with prior validation.
 	 * 
@@ -183,9 +182,7 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			if (re.getCause() instanceof javax.persistence.OptimisticLockException
 					|| re.getCause() instanceof org.eclipse.persistence.exceptions.OptimisticLockException
 					|| re.getCause() instanceof com.vaadin.data.util.sqlcontainer.OptimisticLockException)
-				getMsgs()
-						.showError(
-								"VHL-005: Data have been changed by other user/process.");
+				getMsgs().showError("VHL-005: " + getI18S("MVHL-005"));
 			else
 				getMsgs().showError("VHL-006", re);
 			return false;
@@ -208,7 +205,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			return;
 		if (isModified() && isAskSave()) {
 
-			ConfirmDialog.show(getUI(), "Save?", "Save changes?", "Yes", "No",
+			ConfirmDialog.show(getUI(), getI18S("SaveQ"),
+					getI18S("Save_changesQ"), getI18S("btYes"), getI18S("btNo"),
 					new Runnable() {
 
 						@Override
@@ -284,8 +282,9 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			return;
 
 		if (isModified() && isAskDiscard()) {
-			ConfirmDialog.show(getUI(), "Discard?", "Discard changes?", "Yes",
-					"No", new Runnable() {
+			ConfirmDialog.show(getUI(), getI18S("DiscardQ"),
+					getI18S("Discard_changesQ"), getI18S("btYes"), getI18S("btNo"),
+					new Runnable() {
 
 						@Override
 						public void run() {
@@ -310,9 +309,9 @@ public abstract class BaseEditWindow extends BaseWindow implements
 	protected void saveDiscardAction(final Runnable actionClose) {
 
 		if (getAutoSaveDiscard() == AutoSaveDiscard.ASK) {
-			ConfirmDialog.show(getUI(), "Unsaved changes",
-					"What to do with unsaved changes?", "Save", "Cancel",
-					"Discard", new ConfirmDialog.Listener() {
+			ConfirmDialog.show(getUI(), getI18S("Unsaved_changes"),
+					getI18S("Wtd_changes"), getI18S("btSave"), getI18S("btCancel"),
+					getI18S("btDiscard"), new ConfirmDialog.Listener() {
 
 						private static final long serialVersionUID = -8823586806134361654L;
 
@@ -367,8 +366,9 @@ public abstract class BaseEditWindow extends BaseWindow implements
 		if (!canDeleteMsg())
 			return;
 		if (isAskDelete())
-			ConfirmDialog.show(getUI(), "Delete?", "Confirm to delete?", "Yes",
-					"No", new Runnable() {
+			ConfirmDialog.show(getUI(), getI18S("DeleteQ"),
+					getI18S("Confirm_deleteQ"), getI18S("btYes"), getI18S("btNo"),
+					new Runnable() {
 
 						@Override
 						public void run() {
@@ -414,8 +414,9 @@ public abstract class BaseEditWindow extends BaseWindow implements
 		if (!canCreateMsg())
 			return;
 		if (isAskCreate())
-			ConfirmDialog.show(getUI(), "Create?", "Confirm to create?", "Yes",
-					"No", new Runnable() {
+			ConfirmDialog.show(getUI(), getI18S("CreateQ"),
+					getI18S("Confirm_createQ"), getI18S("btYes"), getI18S("btNo"),
+					new Runnable() {
 
 						@Override
 						public void run() {
@@ -663,7 +664,7 @@ public abstract class BaseEditWindow extends BaseWindow implements
 	 * Shows the message about to save or discard changes
 	 */
 	protected void showSaveDiscardMsg() {
-		getMsgs().showInfo("Please, save or discard changes first.");
+		getMsgs().showInfo(getI18S("PlSavDisc"));
 	}
 
 	/**

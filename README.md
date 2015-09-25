@@ -15,6 +15,7 @@ Main features:
   * High on-line customization of individual window behaviour
   * Permission checking framework.
   * Fast building by inheritance of common window types (lists and forms).
+  * Internationalization
   * Focus on speed and reliability supported by tests on real world data amounts.
   * Tested with the Oracle and PostgreSQL databases.
   * Apache 2.0 license.

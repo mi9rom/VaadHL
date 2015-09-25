@@ -1,5 +1,4 @@
-/*
- * Copyright 2015 Mirosław Romaniuk (mi9rom@gmail.com)
+/* Copyright 2015 Mirosław Romaniuk (mi9rom@gmail.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,18 +15,42 @@
 
 package com.vaadHL;
 
-/**
- * Version information.
- */
-public class Version {
-	private final static String version = "1.2.01";
+import com.vaadHL.i18n.I18Sup;
+import com.vaadHL.utl.msgs.IMsgs;
 
-	/**
-	 * Gets full version string.
-	 * 
-	 * @return the version string
-	 */
-	public static String getFullVersion() {
-		return version;
+/**
+ * Application context i.e. run environment.
+ * 
+ *
+ */
+public class AppContext {
+
+	private IMsgs msgs;
+	I18Sup i18;
+
+	public AppContext() {
+	
+	}
+
+	public AppContext(IMsgs msgs, I18Sup i18) {
+		super();
+		this.msgs = msgs;
+		this.i18 = i18;
+	}
+
+	public IMsgs getMsgs() {
+		return msgs;
+	}
+
+	public void setMsgs(IMsgs msgs) {
+		this.msgs = msgs;
+	}
+
+	public I18Sup getI18() {
+		return i18;
+	}
+
+	public void setI18(I18Sup i18) {
+		this.i18 = i18;
 	}
 }

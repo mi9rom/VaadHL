@@ -16,11 +16,11 @@
 
 package com.vaadHL.window.base;
 
+import com.vaadHL.AppContext;
 import com.vaadHL.utl.action.Action;
 import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
-import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -47,28 +47,29 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 	protected Button btNextRec = null;
 	protected Button btPrevRec = null;
 	protected Button btClose = null;
-	protected Button btAdd = null;
+	protected Button btCreate = null;
 	protected Button btDelete = null;
 	protected Button btEdit = null;
 	boolean showOKCancel = true;
 
 	public FWindow(String winId, String caption, IWinPermChecker permChecker,
-			ICustomizeFWin cust, MWLaunchMode launchMode, IMsgs msgs,
-			boolean readOnlyW) {
-		super(winId, caption, permChecker, cust, launchMode, msgs, readOnlyW);
+			ICustomizeFWin cust, MWLaunchMode launchMode,
+			AppContext appContext, boolean readOnlyW) {
+		super(winId, caption, permChecker, cust, launchMode, appContext,
+				readOnlyW);
 		if (!approvedToOpen)
 			return;
 		setShowOKCancel(cust.isShowOKCancel());
-		btAdd = new Button("New");
-		btDelete = new Button("Delete");
-		btOk = new Button("OK");
+		btCreate = new Button(getI18S("btCreate"));
+		btDelete = new Button(getI18S("btDelete"));
+		btOk = new Button(getI18S("btOK"));
 		btPrevRec = new Button("<");
 		btNextRec = new Button(">");
-		btCancel = new Button("Cancel");
-		btSave = new Button("Save");
-		btDiscard = new Button("Discard");
-		btClose = new Button("Close");
-		btEdit = new Button("Edit");
+		btCancel = new Button(getI18S("btCancel"));
+		btSave = new Button(getI18S("btSave"));
+		btDiscard = new Button(getI18S("btDiscard"));
+		btClose = new Button(getI18S("btClose"));
+		btEdit = new Button(getI18S("btEdit"));
 
 		btOk.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -1556072964935330377L;
@@ -82,7 +83,7 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 		// new actions added
 		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
 
-		newActions.put(new Action(ActionsIds.AC_PREV_ITM, new Command() {
+		newActions.put(new Action(getAppContext(),ActionsIds.AC_PREV_ITM, new Command() {
 
 			@Override
 			public void run(Action action) {
@@ -90,7 +91,7 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		}, btPrevRec));
 
-		newActions.put(new Action(ActionsIds.AC_NEXT_ITM, new Command() {
+		newActions.put(new Action(getAppContext(),ActionsIds.AC_NEXT_ITM, new Command() {
 
 			@Override
 			public void run(Action action) {
@@ -136,7 +137,7 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		});
 
-		newActions.put(new Action(ActionsIds.AC_DELETE, new Command() {
+		newActions.put(new Action(getAppContext(),ActionsIds.AC_DELETE, new Command() {
 
 			@Override
 			public void run(Action action) {
@@ -144,22 +145,22 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		}, btDelete));
 
-		newActions.put(new Action(ActionsIds.AC_CREATE, new Command() {
+		newActions.put(new Action(getAppContext(),ActionsIds.AC_CREATE, new Command() {
 
 			@Override
 			public void run(Action action) {
 				createAskMsg();
 			}
-		}, btAdd));
-		
-		newActions.put(new Action(ActionsIds.AC_EDIT, new Command() {
+		}, btCreate));
+
+		newActions.put(new Action(getAppContext(),ActionsIds.AC_EDIT, new Command() {
 
 			@Override
 			public void run(Action action) {
 				toggleEditing();
 			}
 		}, btEdit));
-		
+
 		addActionsAndChkPerm(newActions);
 
 	}
@@ -180,10 +181,10 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 		HorizontalLayout bottPanel = new HorizontalLayout();
 		if (getLaunchMode() == MWLaunchMode.VIEW_EDIT) {
 
-			bottPanel.addComponent(btAdd);
+			bottPanel.addComponent(btCreate);
 			bottPanel.addComponent(btDelete);
 			bottPanel.addComponent(btEdit);
-			
+
 		}
 
 		// record move buttons
@@ -281,7 +282,7 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 	@Override
 	public boolean setEditModeChkMsg(boolean editMode) {
 		if (super.setEditModeChkMsg(editMode)) {
-			btEdit.setCaption(editMode == true ? "ROnly" : "Edit");
+			btEdit.setCaption(editMode == true ? getI18S("btROnly") : getI18S("btEdit"));
 			return true;
 		} else
 			return false;

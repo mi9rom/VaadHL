@@ -19,6 +19,7 @@ package com.vaadHL.utl.action;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.vaadHL.AppContext;
 import com.vaadHL.utl.data.WrongObjectTypeException;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
@@ -49,20 +50,24 @@ public class Action implements IActionsManipulate {
 	Command command;
 	boolean enabled = true;
 	boolean visible = true;
+	AppContext appContext;
 
-	public Action(int actionId) {
+	public Action(AppContext appContext, int actionId) {
 		this.id = actionId;
+		this.appContext = appContext;
 
 	}
 
-	public Action(int actionId, Command command, Object... objs) {
-		this(actionId, command, true, true, true, objs);
+	public Action(AppContext appContext, int actionId, Command command,
+			Object... objs) {
+		this(appContext, actionId, command, true, true, true, objs);
 	}
 
-	public Action(int actionId, Command command, boolean runAction,
-			boolean enabling, boolean hiding, Object... objs) {
+	public Action(AppContext appContext, int actionId, Command command,
+			boolean runAction, boolean enabling, boolean hiding, Object... objs) {
 		this.id = actionId;
 		this.command = command;
+		this.appContext = appContext;
 		for (Object o : objs) {
 			attach(o, runAction, enabling, hiding);
 		}
@@ -230,9 +235,9 @@ public class Action implements IActionsManipulate {
 		} else if (o instanceof MenuItem) {
 			((MenuItem) o).setEnabled(enabled);
 		} else {
-			throw new WrongObjectTypeException(
-					"VHL-013: Cannot control enabled state of the object type:"
-							+ o.getClass().getName());
+			throw new WrongObjectTypeException("VHL-013: "
+					+ appContext.getI18().getString("MVHL-013")
+					+ o.getClass().getName());
 		}
 	}
 
@@ -255,7 +260,8 @@ public class Action implements IActionsManipulate {
 	}
 
 	/**
-	 * Sets visibility of the object attached to. 
+	 * Sets visibility of the object attached to.
+	 * 
 	 * @param o
 	 * @param visible
 	 */
@@ -275,7 +281,6 @@ public class Action implements IActionsManipulate {
 	public boolean isVisible() {
 		return visible;
 	}
-
 
 	/**
 	 * Gets the Action id

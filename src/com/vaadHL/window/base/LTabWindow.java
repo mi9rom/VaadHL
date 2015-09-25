@@ -2,8 +2,8 @@ package com.vaadHL.window.base;
 
 import java.util.Set;
 
+import com.vaadHL.AppContext;
 import com.vaadHL.utl.helper.TableHelper;
-import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -24,17 +24,16 @@ public class LTabWindow extends LWindow {
 
 	public LTabWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, IMsgs msgs,
+			ChoosingMode chooseMode, boolean readOnly, AppContext appContext,
 			IListSelectionAction selAction) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
-				msgs);
+				appContext);
 
 		if (approvedToOpen == false)
 			return;
 
 		if (table == null) {
-			throw new RuntimeException(
-					"LWindow.initConstructorWidgets() must be overrriden and the field \"table\" instantiated inside it.");
+			throw new RuntimeException("VHL-019: " + getI18S("MVHL-019"));
 		}
 		this.selAction = selAction;
 		tableHelper = new TableHelper(table, getMsgs());
@@ -112,7 +111,7 @@ public class LTabWindow extends LWindow {
 			rowId = mRowId;
 
 		if (rowId == null) {
-			getMsgs().showInfo("VHL-011: No item selected.");
+			getMsgs().showInfo("VHL-011: " + getI18S("MVHL-011"));
 			return null;
 		}
 
@@ -133,7 +132,7 @@ public class LTabWindow extends LWindow {
 	public void closeChoose() {
 		Object selection = getReturnSelection();
 		if (selection == null) {
-			getMsgs().showInfo("VHL-009: No item selected!");
+			getMsgs().showInfo("VHL-009: " + getI18S("MVHL-011"));
 		}
 		if (selection == null) {
 			return;

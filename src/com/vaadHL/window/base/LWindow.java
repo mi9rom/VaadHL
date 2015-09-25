@@ -16,11 +16,11 @@
 
 package com.vaadHL.window.base;
 
+import com.vaadHL.AppContext;
 import com.vaadHL.utl.action.Action;
 import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
-import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -43,27 +43,27 @@ public class LWindow extends BaseListWindow {
 	protected Button btCancel = null;
 	protected Button btClose = null;
 	protected Button btDetails = null;
-	protected Button btAdd = null;
+	protected Button btCreate = null;
 	protected Button btDelete = null;
 	protected Button btEdit = null;
 	protected Button btView = null;
 
 	public LWindow(String winId, String caption, IWinPermChecker permChecker,
 			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
-			boolean readOnly, IMsgs msgs) {
+			boolean readOnly, AppContext appContext) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
-				msgs);
+				appContext);
 		if (approvedToOpen == false)
 			return;
 
-		btOk = new Button("OK");
-		btCancel = new Button("Cancel");
-		btClose = new Button("Close");
-		btDetails = new Button("Details");
-		btAdd = new Button("Add");
-		btDelete = new Button("Delete");
-		btEdit = new Button("Edit");
-		btView = new Button("View");
+		btOk = new Button(getI18S("btOK"));
+		btCancel = new Button(getI18S("btCancel"));
+		btClose = new Button(getI18S("btClose"));
+		btDetails = new Button(getI18S("btDetails"));
+		btCreate = new Button(getI18S("btCreate"));
+		btDelete = new Button(getI18S("btDelete"));
+		btEdit = new Button(getI18S("btEdit"));
+		btView = new Button(getI18S("btView"));
 
 		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
 		ActionGroup readOnlyActions = new ActionGroup(200002);
@@ -106,17 +106,17 @@ public class LWindow extends BaseListWindow {
 			}
 		});
 
-		ac = new Action(ActionsIds.AC_CREATE, new Command() {
+		ac = new Action(getAppContext(), ActionsIds.AC_CREATE, new Command() {
 
 			@Override
 			public void run(Action action) {
 				add();
 			}
-		}, btAdd);
+		}, btCreate);
 		newActions.put(ac);
 		readOnlyActions.put(ac);
 
-		ac = new Action(ActionsIds.AC_DELETE, new Command() {
+		ac = new Action(getAppContext(), ActionsIds.AC_DELETE, new Command() {
 
 			@Override
 			public void run(Action action) {
@@ -126,7 +126,7 @@ public class LWindow extends BaseListWindow {
 		newActions.put(ac);
 		readOnlyActions.put(ac);
 
-		ac = new Action(ActionsIds.AC_EDIT, new Command() {
+		ac = new Action(getAppContext(), ActionsIds.AC_EDIT, new Command() {
 
 			@Override
 			public void run(Action action) {
@@ -163,7 +163,7 @@ public class LWindow extends BaseListWindow {
 		if (isDetailsFunc())
 			bottPanel.addComponent(btDetails);
 		if (isAddFunc())
-			bottPanel.addComponent(btAdd);
+			bottPanel.addComponent(btCreate);
 		if (isDeleteFunc())
 			bottPanel.addComponent(btDelete);
 		if (isEditFunc())

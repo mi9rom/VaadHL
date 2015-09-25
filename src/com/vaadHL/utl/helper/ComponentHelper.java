@@ -67,6 +67,7 @@ public class ComponentHelper {
 	 */
 	static public void populateWIds(AbstractSelect as, String... s) {
 		int i = 0;
+		as.removeAllItems();
 		for (String sp : s) {
 			as.addItem(i);
 			as.setItemCaption(i, sp);
@@ -79,7 +80,7 @@ public class ComponentHelper {
 			Integer[] skip) {
 
 		Set<Integer> se = new HashSet<Integer>(Arrays.asList(skip));
-
+		as.removeAllItems();
 		int i = 0;
 		for (String sp : s) {
 			if (!se.contains(i)) {

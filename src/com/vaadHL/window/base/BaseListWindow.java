@@ -16,7 +16,7 @@
 
 package com.vaadHL.window.base;
 
-import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.AppContext;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 
 /**
@@ -68,8 +68,8 @@ public abstract class BaseListWindow extends BaseWindow implements
 
 	public BaseListWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, IMsgs msgs) {
-		super(winId, caption, permChecker, msgs);
+			ChoosingMode chooseMode, boolean readOnly, AppContext appContext) {
+		super(winId, caption, permChecker, appContext);
 
 		this.chooseMode = chooseMode;
 		this.readOnlyWin = readOnly;
@@ -90,6 +90,7 @@ public abstract class BaseListWindow extends BaseWindow implements
 			cust = custM.getNoChooseMode();
 		else
 			cust = custM.getChooseMode();
+		
 		setDetailsFunc(cust.isDetailsFunc());
 		setAddFunc(cust.isAddFunc());
 		setDeleteFunc(cust.isDeleteFunc());

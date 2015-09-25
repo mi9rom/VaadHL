@@ -15,6 +15,8 @@
 
 package com.vaadHL.utl.action;
 
+import com.vaadHL.i18n.I18Sup;
+
 /**
  * Simply Actions ids container.
  *
@@ -33,23 +35,23 @@ public class ActionsIds {
 	public ActionsIds() {
 	}
 
-	public static String getName(int ac) {
+	public static String getName(I18Sup i18, int ac) {
 		switch (ac) {
 		case AC_OPEN:
-			return "Open";
+			return i18.getString("AC_OPEN");
 		case AC_CREATE:
-			return "Create";
+			return i18.getString("AC_CREATE");
 		case AC_EDIT:
-			return "Edit";
+			return i18.getString("AC_EDIT");
 		case AC_DELETE:
-			return "Delete";
+			return i18.getString("AC_DELETE");
 		case AC_PREV_ITM:
-			return "Previous item";
+			return i18.getString("AC_PREV_ITM");
 		case AC_NEXT_ITM:
-			return "Next item";
+			return i18.getString("AC_NEXT_ITM");
 
 		default:
-			return "UNKNOWN";
+			return i18.getString("AC_UNKNOWN");
 		}
 	}
 }
