@@ -47,6 +47,7 @@ public abstract class SingIeItemFWindow extends FWindow {
 	 * Current item identifier
 	 */
 	protected Object curItId;
+
 	/**
 	 * It id remembered before creation of a new item
 	 */
@@ -166,16 +167,15 @@ public abstract class SingIeItemFWindow extends FWindow {
 	@Override
 	public void delete() {
 		Object id = null;
-
-		if (getLaunchMode() == MWLaunchMode.VIEW_EDIT) {
-			id = nearestItemId();
-		}
+		id = nearestItemId();
 		container.removeItem(curItId);
 		container.commit();
 		if (getLaunchMode() == MWLaunchMode.VIEW_EDIT) {
 			bindId(id);
-		} else
+		} else {
+			curItId = id;
 			close();
+		}
 	}
 
 	/**
@@ -239,6 +239,15 @@ public abstract class SingIeItemFWindow extends FWindow {
 			return true;
 		} else
 			return false;
+	}
+
+	/**
+	 * Gets the last current item id
+	 * 
+	 * @return
+	 */
+	public Object getCurItId() {
+		return curItId;
 	}
 
 }

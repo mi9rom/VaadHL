@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.vaadHL.AppContext;
 import com.vaadHL.utl.helper.TableHelper;
+import com.vaadHL.window.EM.SingIeItemFWindow;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -46,13 +47,13 @@ public class LTabWindow extends LWindow {
 
 	}
 
-	void onTableCLick(ItemClickEvent event) {
+	protected void onTableCLick(ItemClickEvent event) {
 		if (event.isDoubleClick()) {
 			onTableDoubleCLick(event);
 		}
 	}
 
-	void onTableDoubleCLick(ItemClickEvent event) {
+	protected void onTableDoubleCLick(ItemClickEvent event) {
 		switch (getDoubleClickAc()) {
 		case DETAILS:
 			details(event.getItemId());
@@ -136,6 +137,17 @@ public class LTabWindow extends LWindow {
 		closeCause = new CloseCause(CloseCauseEnum.NOCHOOSE,
 				tableHelper.getSelectedItems());
 		super.closeExit();
+	}
+
+	@Override
+	protected void afterFormClosed(BaseWindow win) {
+		if (win instanceof SingIeItemFWindow) {
+			Object id = ((SingIeItemFWindow) win).getCurItId();
+			table.setCurrentPageFirstItemId(id);
+			if (getChooseMode() != ChoosingMode.MULTIPLE_CHOOSE)
+				table.setValue(id);
+		}
+		super.afterFormClosed(win);
 	}
 
 }
