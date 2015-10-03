@@ -18,6 +18,7 @@ package com.vaadHL.window.base;
 
 import com.vaadHL.AppContext;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadin.ui.UI;
 
 /**
  * Base list window. <br>
@@ -204,18 +205,88 @@ public abstract class BaseListWindow extends BaseWindow implements
 	}
 
 	/**
-	 * Calls the form (detail) window for the specific record
+	 * Creates the form (detail) window for the specific record/item id
 	 * 
 	 * @param launchMode
 	 *            {@link MWLaunchMode}
 	 * @param mRowid
+	 *            the id of the selected Item(s) , if null an id is selected
+	 *            internally
+	 * 
+	 * @return the called object or null
 	 */
-	public void callForm(MWLaunchMode launchMode, Object mRowid) {
+	protected BaseWindow getForm(MWLaunchMode launchMode, Object mRowid) {
+		return null;
+	}
+
+	/**
+	 * Fires after a form is called (and shown). Default behaviour - registers
+	 * on close listener for the called form
+	 * 
+	 * @param win
+	 *            the just called form
+	 * @param launchMode
+	 *            {@link MWLaunchMode}
+	 * @param mRowid
+	 *            the id of the selected Item(s) , if null an id is selected
+	 *            internally
+	 */
+	protected void afterFormCall(BaseWindow win, MWLaunchMode launchMode,
+			Object mRowid) {
+		win.addCloseListener(closeListener);
+
+	}
+
+	CloseListener closeListener = new CloseListener() {
+		private static final long serialVersionUID = -6467466981831792900L;
+
+		@Override
+		public void windowClose(CloseEvent e) {
+			afterFormClosed((BaseWindow) e.getSource());
+		}
+	};
+
+	/**
+	 * Fires after a form window closing
+	 * 
+	 * @param win
+	 *            the form window
+	 */
+	protected void afterFormClosed(BaseWindow win) {
 
 	}
 
 	/**
-	 * Calls the form (detail) window.
+	 * Calls the form (detail) window for the specific record/item id and fires
+	 * {@link #callForm(MWLaunchMode launchMode, Object mRowid) afterCallForm }
+	 * 
+	 * @param launchMode
+	 *            {@link MWLaunchMode}
+	 * @param mRowid
+	 *            the id of the selected Item(s) , if null an id is selected
+	 *            internally
+	 */
+	public void callForm(MWLaunchMode launchMode, Object mRowid) {
+		BaseWindow win = getForm(launchMode, mRowid);
+		if (win == null)
+			return;
+		UI.getCurrent().addWindow(win);
+		afterFormCall(win, launchMode, mRowid);
+	}
+
+	/**
+	 * Calls the form (detail) window. An Id is selected internally.
+	 * 
+	 * @param launchMode
+	 *            {@link MWLaunchMode}
+	 */
+	private void getForm(MWLaunchMode launchMode) {
+		getForm(launchMode, null);
+	}
+
+	/**
+	 * Calls the form (detail) window. An Id is selected internally. Next fires
+	 * {@link #callForm(MWLaunchMode launchMode, Object mRowid) afterCallForm }
 	 * 
 	 * @param launchMode
 	 *            {@link MWLaunchMode}
@@ -226,16 +297,17 @@ public abstract class BaseListWindow extends BaseWindow implements
 
 	/**
 	 * Calls the form (detail) window in the details mode for the specific
-	 * record id
+	 * record/item id
 	 * 
 	 * @param mRowid
-	 *            item id/ record id
+	 *            record/item id
 	 */
 
 	public void details(Object mRowid) {
-		callForm(
-				isReadOnly() ? MWLaunchMode.VIEW_ONLY : MWLaunchMode.VIEW_EDIT,
-				mRowid);
+		MWLaunchMode mode = isReadOnly() ? MWLaunchMode.VIEW_ONLY
+				: MWLaunchMode.VIEW_EDIT;
+
+		callForm(mode, mRowid);
 	}
 
 	/**
@@ -286,7 +358,7 @@ public abstract class BaseListWindow extends BaseWindow implements
 	 * Calls the form (detail) window in the details mode
 	 */
 	public void details() {
-		callForm(isReadOnlyWin() ? MWLaunchMode.VIEW_ONLY
+		getForm(isReadOnlyWin() ? MWLaunchMode.VIEW_ONLY
 				: MWLaunchMode.VIEW_EDIT);
 	}
 
@@ -312,6 +384,7 @@ public abstract class BaseListWindow extends BaseWindow implements
 	}
 
 	protected CloseCause closeCause;
+
 	/**
 	 * Gets the cause of a window close and selected objects if necessary
 	 * 
@@ -322,8 +395,8 @@ public abstract class BaseListWindow extends BaseWindow implements
 	}
 
 	/**
-	 * Gets single selectoin to pass to the associated form window.<br>
-	 * In case the is no single selection shows message an returns null.
+	 * Gets single selection to pass to the associated form window.<br>
+	 * In case there is no single selection shows a message an returns null.
 	 * 
 	 * @return
 	 */
@@ -341,8 +414,10 @@ public abstract class BaseListWindow extends BaseWindow implements
 			this.cause = cause;
 			this.addInfo = addInfo;
 		}
+
 		public CloseCauseEnum cause;
 		public Object addInfo;
 
 	}
+
 }
