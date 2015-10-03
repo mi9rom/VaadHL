@@ -90,7 +90,7 @@ public abstract class BaseListWindow extends BaseWindow implements
 			cust = custM.getNoChooseMode();
 		else
 			cust = custM.getChooseMode();
-		
+
 		setDetailsFunc(cust.isDetailsFunc());
 		setAddFunc(cust.isAddFunc());
 		setDeleteFunc(cust.isDeleteFunc());
@@ -311,17 +311,19 @@ public abstract class BaseListWindow extends BaseWindow implements
 		callForm(MWLaunchMode.VIEW_ONLY);
 	}
 
+	protected CloseCause closeCause;
 	/**
-	 * Gets selected object on the list to return in selection mode.
+	 * Gets the cause of a window close and selected objects if necessary
 	 * 
-	 * @return
 	 */
-	protected Object getReturnSelection() {
-		return null;
+	public CloseCause getCloseCause() {
+		return closeCause;
+
 	}
 
 	/**
-	 * Gets single selectoin to pass to the associated form window.<br> In case the is no single selection shows message an returns null.
+	 * Gets single selectoin to pass to the associated form window.<br>
+	 * In case the is no single selection shows message an returns null.
 	 * 
 	 * @return
 	 */
@@ -329,4 +331,18 @@ public abstract class BaseListWindow extends BaseWindow implements
 		return null;
 	}
 
+	public enum CloseCauseEnum {
+		CHOOSE, CANCEL, NOCHOOSE
+	};
+
+	public class CloseCause {
+		public CloseCause(CloseCauseEnum cause, Object addInfo) {
+			super();
+			this.cause = cause;
+			this.addInfo = addInfo;
+		}
+		public CloseCauseEnum cause;
+		public Object addInfo;
+
+	}
 }

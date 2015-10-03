@@ -19,13 +19,11 @@ import com.vaadin.ui.Table;
 public class LTabWindow extends LWindow {
 	private static final long serialVersionUID = 9053183490003952417L;
 	protected Table table;
-	private IListSelectionAction selAction;
 	protected TableHelper tableHelper;
 
 	public LTabWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, AppContext appContext,
-			IListSelectionAction selAction) {
+			ChoosingMode chooseMode, boolean readOnly, AppContext appContext) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
 				appContext);
 
@@ -35,7 +33,7 @@ public class LTabWindow extends LWindow {
 		if (table == null) {
 			throw new RuntimeException("VHL-019: " + getI18S("MVHL-019"));
 		}
-		this.selAction = selAction;
+
 		tableHelper = new TableHelper(table, getMsgs());
 		table.addItemClickListener(new ItemClickListener() {
 			private static final long serialVersionUID = 881449509470779229L;
@@ -89,19 +87,6 @@ public class LTabWindow extends LWindow {
 	}
 
 	@Override
-	public void closeCancel() {
-		super.closeCancel();
-		if (selAction != null)
-			selAction.Cancel(null);
-
-	}
-
-	@Override
-	protected Object getReturnSelection() {
-		return tableHelper.getSelectedItems();
-	}
-
-	@Override
 	protected Object getCallFormSelIdMsg(Object mRowId) {
 		Object rowId = null;
 
@@ -129,25 +114,28 @@ public class LTabWindow extends LWindow {
 	}
 
 	@Override
+	public void closeCancel() {
+		closeCause = new CloseCause(CloseCauseEnum.CANCEL,
+				tableHelper.getSelectedItems());
+		super.closeCancel();
+	}
+
+	@Override
 	public void closeChoose() {
-		Object selection = getReturnSelection();
+		Object selection = tableHelper.getSelectedItems();
 		if (selection == null) {
 			getMsgs().showInfo("VHL-009: " + getI18S("MVHL-011"));
-		}
-		if (selection == null) {
 			return;
 		}
+		closeCause = new CloseCause(CloseCauseEnum.CHOOSE, selection);
 		super.closeChoose();
-		if (selAction != null)
-			selAction.Confirm(selection);
-
 	}
 
 	@Override
 	public void closeExit() {
+		closeCause = new CloseCause(CloseCauseEnum.NOCHOOSE,
+				tableHelper.getSelectedItems());
 		super.closeExit();
-		if (selAction != null)
-			selAction.Exit(null);
 	}
 
 }
