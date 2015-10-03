@@ -2,6 +2,11 @@ package com.vaadHL.window.base;
 
 import java.util.Set;
 
+import org.vaadin.peter.contextmenu.ContextMenu;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
+
 import com.vaadHL.AppContext;
 import com.vaadHL.utl.helper.TableHelper;
 import com.vaadHL.window.EM.SingIeItemFWindow;
@@ -21,6 +26,8 @@ public class LTabWindow extends LWindow {
 	private static final long serialVersionUID = 9053183490003952417L;
 	protected Table table;
 	protected TableHelper tableHelper;
+	private ContextMenuItem mnRefersh;
+	private ContextMenuItem mnUnselAll;
 
 	public LTabWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
@@ -44,6 +51,8 @@ public class LTabWindow extends LWindow {
 				onTableCLick(event);
 			}
 		});
+
+		createTabContextMenu();
 
 	}
 
@@ -148,6 +157,36 @@ public class LTabWindow extends LWindow {
 				table.setValue(id);
 		}
 		super.afterFormClosed(win);
+	}
+
+	@Override
+	public void refresh() {
+		/*
+		 * Attention: this doesn't refresh any container. Refresh container if
+		 * you, for instance,  would like to reload data from a database .
+		 */
+		table.refreshRowCache();
+	}
+
+	/**
+	 * Creates table context menu
+	 */
+	protected void createTabContextMenu() {
+		final ContextMenu contextMenu = new ContextMenu();
+		mnRefersh = contextMenu.addItem(getI18S("mnRefresh"));
+		mnUnselAll = contextMenu.addItem(getI18S("mnUnselAll"));
+
+		contextMenu.setAsContextMenuOf(table);
+		contextMenu.addItemClickListener(new ContextMenuItemClickListener() {
+			@Override
+			public void contextMenuItemClicked(ContextMenuItemClickEvent event) {
+				if (event.getSource().equals(mnRefersh))
+					refresh();
+				else if (event.getSource().equals(mnUnselAll))
+					table.setValue(null);
+			}
+		});
+
 	}
 
 }

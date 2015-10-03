@@ -152,7 +152,7 @@ public abstract class BaseWindow extends Window {
 		return appContext.getI18().getStringNE(name);
 
 	}
-	
+
 	/**
 	 * Gets localized array of string
 	 * 
@@ -165,8 +165,6 @@ public abstract class BaseWindow extends Window {
 		return appContext.getI18().getArryString(name);
 
 	}
-
-	
 
 	public ActionGroup getActions() {
 		if (actions == null) {
@@ -308,6 +306,13 @@ public abstract class BaseWindow extends Window {
 
 	public AppContext getAppContext() {
 		return appContext;
+	}
+
+	/**
+	 * Refresh the window content
+	 */
+	public void refresh() {
+
 	}
 
 }
