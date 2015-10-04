@@ -358,7 +358,7 @@ public abstract class BaseListWindow extends BaseWindow implements
 	 * Calls the form (detail) window in the details mode
 	 */
 	public void details() {
-		getForm(isReadOnlyWin() ? MWLaunchMode.VIEW_ONLY
+		callForm(isReadOnlyWin() ? MWLaunchMode.VIEW_ONLY
 				: MWLaunchMode.VIEW_EDIT);
 	}
 
