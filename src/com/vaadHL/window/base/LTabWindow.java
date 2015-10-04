@@ -112,8 +112,7 @@ public class LTabWindow extends LWindow {
 
 		if (rowId instanceof Set) {
 			if (((Set<?>) rowId).size() != 1) {
-				getMsgs().showInfo(
-						"VHL-012: Only single selection is permitted.");
+				getMsgs().showInfo("VHL-012:" + getI18S("MVHL-012"));
 				return null;
 			} else {
 				rowId = (((Set<?>) rowId).toArray())[0];
@@ -163,7 +162,7 @@ public class LTabWindow extends LWindow {
 	public void refresh() {
 		/*
 		 * Attention: this doesn't refresh any container. Refresh container if
-		 * you, for instance,  would like to reload data from a database .
+		 * , for instance, you would like to reload data from a database .
 		 */
 		table.refreshRowCache();
 	}
