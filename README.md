@@ -16,6 +16,7 @@ Main features:
   * Permission checking framework.
   * Fast building by inheritance of common window types (lists and forms).
   * Internationalization
+  * Save/restore window state
   * Focus on speed and reliability supported by tests on real world data amounts.
   * Tested with the Oracle and PostgreSQL databases.
   * Apache 2.0 license.

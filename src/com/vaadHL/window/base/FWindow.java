@@ -16,12 +16,13 @@
 
 package com.vaadHL.window.base;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.utl.action.Action;
 import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeFWin;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -36,7 +37,7 @@ import com.vaadin.ui.HorizontalLayout;
  * @author Miroslaw Romaniuk
  *
  */
-public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
+public abstract class FWindow extends BaseEditWindow {
 
 	private static final long serialVersionUID = -6883321082928354658L;
 
@@ -50,16 +51,17 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 	protected Button btCreate = null;
 	protected Button btDelete = null;
 	protected Button btEdit = null;
-	boolean showOKCancel = true;
+
+	private ICustomizeFWin customize;
 
 	public FWindow(String winId, String caption, IWinPermChecker permChecker,
-			ICustomizeFWin cust, MWLaunchMode launchMode,
-			AppContext appContext, boolean readOnlyW) {
-		super(winId, caption, permChecker, cust, launchMode, appContext,
+			ICustomizeFWin customize, MWLaunchMode launchMode,
+			IAppContext appContext, boolean readOnlyW) {
+		super(winId, caption, permChecker, customize, launchMode, appContext,
 				readOnlyW);
 		if (!approvedToOpen)
 			return;
-		setShowOKCancel(cust.isShowOKCancel());
+		this.customize = customize;
 		btCreate = new Button(getI18S("btCreate"));
 		btDelete = new Button(getI18S("btDelete"));
 		btOk = new Button(getI18S("btOK"));
@@ -83,21 +85,23 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 		// new actions added
 		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
 
-		newActions.put(new Action(getAppContext(),ActionsIds.AC_PREV_ITM, new Command() {
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_PREV_ITM,
+				new Command() {
 
-			@Override
-			public void run(Action action) {
-				moveToPrevRecordChk();
-			}
-		}, btPrevRec));
+					@Override
+					public void run(Action action) {
+						moveToPrevRecordChk();
+					}
+				}, btPrevRec));
 
-		newActions.put(new Action(getAppContext(),ActionsIds.AC_NEXT_ITM, new Command() {
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_NEXT_ITM,
+				new Command() {
 
-			@Override
-			public void run(Action action) {
-				moveToNextRecordChk();
-			}
-		}, btNextRec));
+					@Override
+					public void run(Action action) {
+						moveToNextRecordChk();
+					}
+				}, btNextRec));
 
 		btCancel.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -7802414620464909596L;
@@ -137,29 +141,32 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 			}
 		});
 
-		newActions.put(new Action(getAppContext(),ActionsIds.AC_DELETE, new Command() {
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_DELETE,
+				new Command() {
 
-			@Override
-			public void run(Action action) {
-				deleteAskMsg();
-			}
-		}, btDelete));
+					@Override
+					public void run(Action action) {
+						deleteAskMsg();
+					}
+				}, btDelete));
 
-		newActions.put(new Action(getAppContext(),ActionsIds.AC_CREATE, new Command() {
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_CREATE,
+				new Command() {
 
-			@Override
-			public void run(Action action) {
-				createAskMsg();
-			}
-		}, btCreate));
+					@Override
+					public void run(Action action) {
+						createAskMsg();
+					}
+				}, btCreate));
 
-		newActions.put(new Action(getAppContext(),ActionsIds.AC_EDIT, new Command() {
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_EDIT,
+				new Command() {
 
-			@Override
-			public void run(Action action) {
-				toggleEditing();
-			}
-		}, btEdit));
+					@Override
+					public void run(Action action) {
+						toggleEditing();
+					}
+				}, btEdit));
 
 		addActionsAndChkPerm(newActions);
 
@@ -272,17 +279,14 @@ public abstract class FWindow extends BaseEditWindow implements ICustomizeFWin {
 	abstract protected void moveToPrevRecord();
 
 	public boolean isShowOKCancel() {
-		return showOKCancel;
-	}
-
-	public void setShowOKCancel(boolean showOKCancel) {
-		this.showOKCancel = showOKCancel;
+		return customize.isShowOKCancel();
 	}
 
 	@Override
 	public boolean setEditModeChkMsg(boolean editMode) {
 		if (super.setEditModeChkMsg(editMode)) {
-			btEdit.setCaption(editMode == true ? getI18S("btROnly") : getI18S("btEdit"));
+			btEdit.setCaption(editMode == true ? getI18S("btROnly")
+					: getI18S("btEdit"));
 			return true;
 		} else
 			return false;

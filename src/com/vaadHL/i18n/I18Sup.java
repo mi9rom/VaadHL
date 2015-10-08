@@ -34,7 +34,7 @@ public interface I18Sup {
 	public void setLocale(Locale locale);
 
 	/**
-	 * Gets the locale used by other functions.
+	 * Gets the locale used by other functions. If the locale is not set returns null.
 	 */
 	public Locale getLocale();
 

@@ -18,8 +18,10 @@ package com.vaadHL.window.base;
 
 import org.vaadin.dialogs.ConfirmDialog;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeEditWin;
+import com.vaadHL.window.customize.ICustomizeEditWin.AutoSaveDiscard;
 
 /**
  * Base editing form window.
@@ -27,28 +29,24 @@ import com.vaadHL.window.base.perm.IWinPermChecker;
  * @author Miroslaw Romaniuk
  *
  */
-public abstract class BaseEditWindow extends BaseWindow implements
-		ICustomizeEditWin {
+public abstract class BaseEditWindow extends BaseWindow {
 
 	private static final long serialVersionUID = 3045993334696013902L;
 
-	private boolean askSave = false;
-	private boolean askDiscard = false;
-	private boolean askDelete = true;
-	private boolean askCreate = false;
-	private AutoSaveDiscard autoSaveDiscard = AutoSaveDiscard.MESSAGE;
-	public boolean prevNextFunc;
 	private MWLaunchMode launchMode = null;
 	private MWLaunchMode curWinMode = null;
 	private boolean editingMode = false;
 	private boolean readOnlyWin;
 
+	private ICustomizeEditWin customize;
+
 	public BaseEditWindow(String winId, String caption,
-			IWinPermChecker permChecker, ICustomizeEditWin cust,
-			MWLaunchMode launchMode, AppContext appContext, boolean readOnlyW) {
-		super(winId, caption, permChecker, appContext);
+			IWinPermChecker permChecker, ICustomizeEditWin customize,
+			MWLaunchMode launchMode, IAppContext appContext, boolean readOnlyW) {
+		super(winId, caption,customize, permChecker, appContext);
 		if (!approvedToOpen)
 			return;
+		this.customize = customize;
 		this.setReadOnlyWin(readOnlyW);
 		curWinMode = this.launchMode = launchMode;
 
@@ -81,9 +79,6 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			setNotPermitedContent(getWinId() + "VHL-018: "
 					+ getI18S("MVHL-018"));
 		}
-
-		customize(cust);
-
 	}
 
 	// ---------------- Window scope permission checking ------------
@@ -206,8 +201,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 		if (isModified() && isAskSave()) {
 
 			ConfirmDialog.show(getUI(), getI18S("SaveQ"),
-					getI18S("Save_changesQ"), getI18S("btYes"), getI18S("btNo"),
-					new Runnable() {
+					getI18S("Save_changesQ"), getI18S("btYes"),
+					getI18S("btNo"), new Runnable() {
 
 						@Override
 						public void run() {
@@ -283,8 +278,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 
 		if (isModified() && isAskDiscard()) {
 			ConfirmDialog.show(getUI(), getI18S("DiscardQ"),
-					getI18S("Discard_changesQ"), getI18S("btYes"), getI18S("btNo"),
-					new Runnable() {
+					getI18S("Discard_changesQ"), getI18S("btYes"),
+					getI18S("btNo"), new Runnable() {
 
 						@Override
 						public void run() {
@@ -310,8 +305,9 @@ public abstract class BaseEditWindow extends BaseWindow implements
 
 		if (getAutoSaveDiscard() == AutoSaveDiscard.ASK) {
 			ConfirmDialog.show(getUI(), getI18S("Unsaved_changes"),
-					getI18S("Wtd_changes"), getI18S("btSave"), getI18S("btCancel"),
-					getI18S("btDiscard"), new ConfirmDialog.Listener() {
+					getI18S("Wtd_changes"), getI18S("btSave"),
+					getI18S("btCancel"), getI18S("btDiscard"),
+					new ConfirmDialog.Listener() {
 
 						private static final long serialVersionUID = -8823586806134361654L;
 
@@ -367,8 +363,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			return;
 		if (isAskDelete())
 			ConfirmDialog.show(getUI(), getI18S("DeleteQ"),
-					getI18S("Confirm_deleteQ"), getI18S("btYes"), getI18S("btNo"),
-					new Runnable() {
+					getI18S("Confirm_deleteQ"), getI18S("btYes"),
+					getI18S("btNo"), new Runnable() {
 
 						@Override
 						public void run() {
@@ -415,8 +411,8 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			return;
 		if (isAskCreate())
 			ConfirmDialog.show(getUI(), getI18S("CreateQ"),
-					getI18S("Confirm_createQ"), getI18S("btYes"), getI18S("btNo"),
-					new Runnable() {
+					getI18S("Confirm_createQ"), getI18S("btYes"),
+					getI18S("btNo"), new Runnable() {
 
 						@Override
 						public void run() {
@@ -502,73 +498,28 @@ public abstract class BaseEditWindow extends BaseWindow implements
 			super.close();
 	}
 
-	// ---------------- customization ------------
-	/**
-	 * Gets {@link AutoSaveDiscard autosave} state.
-	 */
 	public AutoSaveDiscard getAutoSaveDiscard() {
-		return autoSaveDiscard;
+		return customize.getAutoSaveDiscard();
 	}
 
 	public boolean isAskSave() {
-		return askSave;
-	}
-
-	public void setAskSave(boolean askSave) {
-		this.askSave = askSave;
+		return customize.isAskSave();
 	}
 
 	public boolean isAskDiscard() {
-		return askDiscard;
-	}
-
-	public void setAskDiscard(boolean askDiscard) {
-		this.askDiscard = askDiscard;
-	}
-
-	public void setAutoSaveDiscard(AutoSaveDiscard autoSaveDiscard) {
-		this.autoSaveDiscard = autoSaveDiscard;
+		return customize.isAskDiscard();
 	}
 
 	public boolean isAskCreate() {
-		return askCreate;
-	}
-
-	public void setAskCreate(boolean askCreate) {
-		this.askCreate = askCreate;
+		return customize.isAskCreate();
 	}
 
 	public boolean isAskDelete() {
-		return askDelete;
-	}
-
-	public void setAskDelete(boolean askDelete) {
-		this.askDelete = askDelete;
+		return customize.isAskDelete();
 	}
 
 	public boolean isPrevNextFunc() {
-		return prevNextFunc;
-	}
-
-	public void setPrevNextFunc(boolean prevNextFunc) {
-		this.prevNextFunc = prevNextFunc;
-	}
-
-	/**
-	 * Window behaviour customization setting.
-	 * 
-	 * @param cust
-	 *            customization parameters
-	 */
-	public void customize(ICustomizeEditWin cust) {
-		if (cust == null)
-			return;
-		setAskDiscard(cust.isAskDiscard());
-		setAskSave(cust.isAskSave());
-		setAutoSaveDiscard(cust.getAutoSaveDiscard());
-		setAskDelete(cust.isAskDelete());
-		setAskCreate(cust.isAskCreate());
-		setPrevNextFunc(cust.isPrevNextFunc());
+		return customize.isPrevNextFunc();
 	}
 
 	// ---------------- Edit mode ------------

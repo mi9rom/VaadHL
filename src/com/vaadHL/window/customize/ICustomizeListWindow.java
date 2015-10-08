@@ -14,15 +14,15 @@
  * the License.
  */
 
-package com.vaadHL.window.base;
+package com.vaadHL.window.customize;
 
 /**
- * List window customization in the particular launch mode. 
+ * List window customization in the particular launch mode.
  * 
  * @author Miroslaw Romaniuk
  *
  */
-public interface ICustomizeListWindow {
+public interface ICustomizeListWindow extends ICustomizeWin {
 
 	/**
 	 * 
@@ -65,11 +65,11 @@ public interface ICustomizeListWindow {
 	 * <li>CREATE - create a new record</li>
 	 * <li>CHOOSE - when in the choosing mode - choose the selected record(s))
 	 * and exit in the OK mode</li>
-	 * <li> NOTHING - do nothing </li>
+	 * <li>NOTHING - do nothing</li>
 	 * </ul>
 	 */
 	public enum DoubleClickAc {
-		DETAILS, VIEW, EDIT, DELETE, CREATE, CHOOSE,NOTHING
+		DETAILS, VIEW, EDIT, DELETE, CREATE, CHOOSE, NOTHING
 	}
 
 	/**

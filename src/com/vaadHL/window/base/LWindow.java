@@ -16,12 +16,13 @@
 
 package com.vaadHL.window.base;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.utl.action.Action;
 import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeLWMultiMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -50,7 +51,7 @@ public class LWindow extends BaseListWindow {
 
 	public LWindow(String winId, String caption, IWinPermChecker permChecker,
 			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
-			boolean readOnly, AppContext appContext) {
+			boolean readOnly, IAppContext appContext) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
 				appContext);
 		if (approvedToOpen == false)

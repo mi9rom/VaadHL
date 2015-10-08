@@ -20,11 +20,11 @@ import javax.persistence.EntityManager;
 
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.window.base.FWindow;
-import com.vaadHL.window.base.ICustomizeFWin;
 import com.vaadHL.window.base.MWLaunchMode;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeFWin;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 
@@ -57,7 +57,7 @@ public abstract class SingIeItemFWindow extends FWindow {
 			IWinPermChecker permChecker, ICustomizeFWin cust,
 			MWLaunchMode launchMode, EntityManager em,
 			LazyEntityContainer<?> container, Object itemId,
-			AppContext appContext, boolean readOnlyW) {
+			IAppContext appContext, boolean readOnlyW) {
 		super(winId, caption, permChecker, cust, launchMode, appContext,
 				readOnlyW);
 		if (!approvedToOpen)

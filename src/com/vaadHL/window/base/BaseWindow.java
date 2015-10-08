@@ -16,13 +16,16 @@
 
 package com.vaadHL.window.base;
 
-import java.util.MissingResourceException;
-
 import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.i18n.I18Sup;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.utl.state.IStateVHL;
+import com.vaadHL.utl.state.ScreenInfo;
+import com.vaadHL.utl.state.VHLState;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeWin;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -38,7 +41,7 @@ import com.vaadin.ui.Window;
  * @author Miroslaw Romaniuk
  *
  */
-public abstract class BaseWindow extends Window {
+public abstract class BaseWindow extends Window implements IStateVHL {
 
 	private static final long serialVersionUID = 3460211791860318900L;
 	private String winId;
@@ -49,7 +52,8 @@ public abstract class BaseWindow extends Window {
 	protected boolean approvedToOpen;
 
 	private ActionGroup actions;
-	private AppContext appContext;
+	private IAppContext appContext;
+	private ICustomizeWin customize;
 
 	/**
 	 * Creates a new base window. Sets the title.
@@ -60,12 +64,13 @@ public abstract class BaseWindow extends Window {
 	 *            the part of the title {@link BaseWindow#makeTitle makeTitle}
 	 * @param permChecker
 	 */
-	public BaseWindow(String winId, String caption,
-			IWinPermChecker permChecker, AppContext appContext) {
+	public BaseWindow(String winId, String caption, ICustomizeWin customize,
+			IWinPermChecker permChecker, IAppContext appContext) {
 		super();
 		this.appContext = appContext;
 		this.winId = winId;
 		this.permChecker = permChecker;
+		this.customize = customize;
 		setCaption(makeTitle(winId, caption));
 		if (!canShow()) {
 			approvedToOpen = false;
@@ -256,22 +261,17 @@ public abstract class BaseWindow extends Window {
 		setContent(l);
 	}
 
-	public boolean saveState() {
-		return true;
-	}
-
-	public boolean retstoreState() {
-		return true;
-	}
-
 	public boolean beforeClose() {
-		return saveState();
+		return true;
 	}
 
 	@Override
 	public void close() {
-		if (approvedToOpen)
+		if (approvedToOpen) {
 			beforeClose();
+			if (isAutoSaveState())
+				saveState();
+		}
 		super.close();
 	}
 
@@ -293,7 +293,7 @@ public abstract class BaseWindow extends Window {
 	}
 
 	/**
-	 * Adds action group to the window actions and set its state using
+	 * Adds action group to the window actions and sets its state using
 	 * permission checker.
 	 * 
 	 * @param ag
@@ -304,7 +304,7 @@ public abstract class BaseWindow extends Window {
 		ag.setPermisions(getWinId(), permChecker);
 	}
 
-	public AppContext getAppContext() {
+	public IAppContext getAppContext() {
 		return appContext;
 	}
 
@@ -315,4 +315,67 @@ public abstract class BaseWindow extends Window {
 
 	}
 
+	// -------------- State handling -------------------
+
+	public boolean isAutoSaveState() {
+		return customize.isAutoSaveState();
+	}
+
+	public boolean isAutoRestoreState() {
+		return customize.isAutoRestoreState();
+	}
+
+	/**
+	 * Gets the current window state
+	 */
+	@Override
+	public VHLState getVHLState() {
+		ScreenInfo si = new ScreenInfo();
+		si.readFrom(this);
+		return si;
+	}
+
+	/**
+	 * Sets the current window state
+	 */
+	public void setVHLState(VHLState state) {
+		if (state == null)
+			return;
+		try {
+			ScreenInfo si = (ScreenInfo) state;
+			if (si != null)
+				si.applyToWin(this);
+		} catch (Exception e) {
+			getMsgs().showError("VHL-023", e);
+		}
+	}
+
+	/**
+	 * Saves the current window state
+	 */
+	protected void saveState() {
+		try {
+			appContext.getStateLoader().saveState(getWinId(), getVHLState());
+		} catch (Exception e) {
+			getMsgs().showError("VHL-024", e);
+		}
+	}
+
+	/**
+	 * Restores the window state
+	 */
+	protected void restoreState() {
+		try {
+			setVHLState(appContext.getStateLoader().loadState(getWinId()));
+		} catch (Exception e) {
+			getMsgs().showError("VHL-025", e);
+		}
+	}
+
+	@Override
+	public void attach() {
+		super.attach();
+		if (isAutoRestoreState())
+			restoreState();
+	}
 }

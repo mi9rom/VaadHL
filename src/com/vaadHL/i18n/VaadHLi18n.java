@@ -38,17 +38,18 @@ public class VaadHLi18n implements I18Sup {
 
 	public VaadHLi18n() {
 		super();
-
 		sources = new ArrayDeque<String>();
+		bundle = new ArrayDeque<ResourceBundle>();
 	}
 
 	public VaadHLi18n(Locale locale) {
-		super();
+		sources = new ArrayDeque<String>();
 		setLocale(locale);
 	}
 
 	@Override
 	public Locale getLocale() {
+
 		return locale;
 	}
 
@@ -61,12 +62,13 @@ public class VaadHLi18n implements I18Sup {
 	 * @return
 	 */
 	ResourceBundle getBungle(String src) throws MissingResourceException {
-		try {
-			return (ResourceBundle.getBundle(src, locale));
+		if (locale != null) {
+			try {
+				return (ResourceBundle.getBundle(src, getLocale()));
 
-		} catch (MissingResourceException e) {
+			} catch (MissingResourceException e) {
+			}
 		}
-
 		return (ResourceBundle.getBundle(src));
 	}
 
@@ -127,7 +129,11 @@ public class VaadHLi18n implements I18Sup {
 		}
 
 		if (s == null) {
-			throw er;
+			if (er == null)
+				new MissingResourceException("'" + name + "' not found", null,
+						name);
+			else
+				throw er;
 		}
 
 		try {

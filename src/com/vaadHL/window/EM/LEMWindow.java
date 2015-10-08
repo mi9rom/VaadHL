@@ -18,11 +18,11 @@ package com.vaadHL.window.EM;
 
 import javax.persistence.EntityManager;
 
-import com.vaadHL.AppContext;
-import com.vaadHL.window.base.ICustomizeLWMultiMode;
+import com.vaadHL.IAppContext;
 import com.vaadHL.window.base.LTabWindow;
 import com.vaadHL.window.base.LWindow;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeLWMultiMode;
 
 /**
  * Entity Manager based list window.<br>
@@ -38,7 +38,7 @@ public class LEMWindow extends LTabWindow {
 
 	public LEMWindow(String winId, String caption, IWinPermChecker permChecker,
 			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
-			boolean readOnly, EntityManager em, AppContext appContext) {
+			boolean readOnly, EntityManager em, IAppContext appContext) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
 				appContext);
 		this.em = em;

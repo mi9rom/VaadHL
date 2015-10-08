@@ -15,42 +15,77 @@
 
 package com.vaadHL;
 
+import java.util.Locale;
+
 import com.vaadHL.i18n.I18Sup;
+import com.vaadHL.i18n.VaadHLi18n;
 import com.vaadHL.utl.msgs.IMsgs;
+import com.vaadHL.utl.msgs.Msgs;
+import com.vaadHL.utl.state.IVHLStateLoader;
+import com.vaadHL.utl.state.InMemVHLStateLoader;
 
 /**
- * Application context i.e. run environment.
+ * Default implementation of the {@link IAppContext} Application context
+ * interface}
  * 
- *
  */
-public class AppContext {
+public class AppContext implements IAppContext {
 
-	private IMsgs msgs;
-	I18Sup i18;
+	private IMsgs msgs; // messages
+	private I18Sup i18; // internationalization
+	private IVHLStateLoader stateLoader; // saving/restoring states
 
 	public AppContext() {
-	
+
 	}
 
-	public AppContext(IMsgs msgs, I18Sup i18) {
+	public AppContext(IMsgs msgs, I18Sup i18, IVHLStateLoader stateLoader) {
 		super();
 		this.msgs = msgs;
 		this.i18 = i18;
+		this.stateLoader = stateLoader;
 	}
 
+	public AppContext(I18Sup i18) {
+		setI18(i18);
+	}
+
+	@Override
 	public IMsgs getMsgs() {
+		if (msgs == null) {
+			msgs = new Msgs();
+		}
 		return msgs;
 	}
 
+	@Override
 	public void setMsgs(IMsgs msgs) {
 		this.msgs = msgs;
 	}
 
+	@Override
 	public I18Sup getI18() {
+		if (i18 == null) {
+			i18 = new VaadHLi18n();
+		}
 		return i18;
 	}
 
+	@Override
 	public void setI18(I18Sup i18) {
 		this.i18 = i18;
 	}
+
+	@Override
+	public IVHLStateLoader getStateLoader() {
+		if (stateLoader == null)
+			stateLoader = new InMemVHLStateLoader();
+		return stateLoader;
+	}
+
+	@Override
+	public void setStateLoader(IVHLStateLoader stateLoader) {
+		this.stateLoader = stateLoader;
+	}
+
 }

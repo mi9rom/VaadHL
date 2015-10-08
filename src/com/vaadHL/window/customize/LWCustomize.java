@@ -1,4 +1,5 @@
-package com.vaadHL.window.base;
+package com.vaadHL.window.customize;
+
 
 /*
  * Copyright 2015 Mirosław Romaniuk (mi9rom@gmail.com)

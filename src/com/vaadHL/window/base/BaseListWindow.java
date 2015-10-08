@@ -16,19 +16,26 @@
 
 package com.vaadHL.window.base;
 
-import com.vaadHL.AppContext;
+import java.io.Serializable;
+
+import com.vaadHL.IAppContext;
+import com.vaadHL.utl.state.VHLFilterState;
+import com.vaadHL.utl.state.VHLSortState;
+import com.vaadHL.utl.state.VHLState;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeLWMultiMode;
+import com.vaadHL.window.customize.ICustomizeListWindow;
+import com.vaadHL.window.customize.ICustomizeListWindow.DoubleClickAc;
 import com.vaadin.ui.UI;
 
 /**
  * Base list window. <br>
- * Basic functionality of closing , creating , form calling, customization.
+ * Basic functionality of closing , creating , form calling, customization, filtering, sorting 
  * 
  * @author Miroslaw Romaniuk
  *
  */
-public abstract class BaseListWindow extends BaseWindow implements
-		ICustomizeListWindow {
+public abstract class BaseListWindow extends BaseWindow{
 
 	private static final long serialVersionUID = 7671927662680629987L;
 
@@ -43,114 +50,46 @@ public abstract class BaseListWindow extends BaseWindow implements
 
 	private ChoosingMode chooseMode = null;
 	private boolean readOnlyWin;
-
-	/**
-	 * Is Details functionality available.
-	 */
-	boolean detailsFunc = true;
-	/**
-	 * Show the Add functionality available.
-	 */
-	boolean addFunc = true;
-	/**
-	 * Show the delete functionality available.
-	 */
-	boolean deleteFunc = true;
-	/**
-	 * Show the edit functionality available.
-	 */
-	boolean editFunc = true;
-	/**
-	 * Show the View functionality available.
-	 */
-	boolean viewFunc = true;
-
-	DoubleClickAc doubleClickAc = DoubleClickAc.CHOOSE;
+	ICustomizeListWindow customize;
 
 	public BaseListWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, AppContext appContext) {
-		super(winId, caption, permChecker, appContext);
+			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
+		super(winId, caption,
+				(chooseMode == ChoosingMode.NO_CHOOSE) ? customize
+						.getNoChooseMode() : customize.getChooseMode(),
+				permChecker, appContext);
 
 		this.chooseMode = chooseMode;
 		this.readOnlyWin = readOnly;
-		this.customize(customize);
-	}
-
-	// ---------------- customization ------------
-
-	/**
-	 * Window behaviour customization setting.
-	 * 
-	 * @param cust
-	 *            customization parameters
-	 */
-	public void customize(ICustomizeLWMultiMode custM) {
-		ICustomizeListWindow cust;
 		if (chooseMode == ChoosingMode.NO_CHOOSE)
-			cust = custM.getNoChooseMode();
+			this.customize = customize.getNoChooseMode();
 		else
-			cust = custM.getChooseMode();
-
-		setDetailsFunc(cust.isDetailsFunc());
-		setAddFunc(cust.isAddFunc());
-		setDeleteFunc(cust.isDeleteFunc());
-		setViewFunc(cust.isViewFunc());
-		setEditFunc(cust.isEditFunc());
-		setDoubleClickAc(cust.getDoubleClickAc());
+			this.customize = customize.getChooseMode();
 	}
 
-	@Override
 	public boolean isDetailsFunc() {
-		return detailsFunc;
+		return customize.isDetailsFunc();
 	}
 
-	public void setDetailsFunc(boolean details) {
-		this.detailsFunc = details;
-	}
-
-	@Override
 	public boolean isAddFunc() {
-		return addFunc;
+		return customize.isAddFunc();
 	}
 
-	public void setAddFunc(boolean addRec) {
-		this.addFunc = addRec;
-	}
-
-	@Override
 	public boolean isDeleteFunc() {
-		return deleteFunc;
+		return customize.isDeleteFunc();
 	}
 
-	public void setDeleteFunc(boolean deleteRec) {
-		this.deleteFunc = deleteRec;
-	}
-
-	@Override
 	public boolean isViewFunc() {
-		return viewFunc;
+		return customize.isViewFunc();
 	}
 
-	public void setViewFunc(boolean view) {
-		this.viewFunc = view;
-	}
-
-	@Override
 	public boolean isEditFunc() {
-		return editFunc;
-	}
-
-	public void setEditFunc(boolean edit) {
-		this.editFunc = edit;
+		return customize.isEditFunc();
 	}
 
 	public DoubleClickAc getDoubleClickAc() {
-		return doubleClickAc;
-	}
-
-	public void setDoubleClickAc(DoubleClickAc doubleClickAc) {
-		this.doubleClickAc = doubleClickAc;
+		return customize.getDoubleClickAc();
 	}
 
 	// ---------------- ------------
@@ -391,7 +330,6 @@ public abstract class BaseListWindow extends BaseWindow implements
 	 */
 	public CloseCause getCloseCause() {
 		return closeCause;
-
 	}
 
 	/**
@@ -417,7 +355,175 @@ public abstract class BaseListWindow extends BaseWindow implements
 
 		public CloseCauseEnum cause;
 		public Object addInfo;
+	}
+
+	// ------- State handling -------
+
+	/**
+	 * List widow state key
+	 */
+	public class LWinStateKey implements Serializable {
+
+		public LWinStateKey(String winId, ChoosingMode chooseMode) {
+			super();
+			this.winId = winId;
+			this.chooseMode = chooseMode;
+		}
+
+		private static final long serialVersionUID = 6946110034836041223L;
+		String winId;
+		ChoosingMode chooseMode;
+
+		public String getWinId() {
+			return winId;
+		}
+
+		public void setWinId(String winId) {
+			this.winId = winId;
+		}
+
+		public ChoosingMode getChooseMode() {
+			return chooseMode;
+		}
+
+		public void setChooseMode(ChoosingMode chooseMode) {
+			this.chooseMode = chooseMode;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof LWinStateKey) {
+				LWinStateKey c = (LWinStateKey) obj;
+				return c.getWinId().equals(getWinId())
+						&& c.getChooseMode() == getChooseMode();
+
+			} else
+				return super.equals(obj);
+		}
+
+		@Override
+		public int hashCode() {
+			return getChooseMode().hashCode() + getWinId().hashCode() << 2;
+		}
+	}
+
+	/**
+	 * Saves the list state taking into account the choosing mode
+	 */
+	@Override
+	protected void saveState() {
+		getAppContext().getStateLoader().saveState(
+				new LWinStateKey(getWinId(), getChooseMode()), getVHLState());
+	}
+
+	/**
+	 * Restores the list state taking into account the choosing mode
+	 */
+	@Override
+	protected void restoreState() {
+		VHLState state = getAppContext().getStateLoader().loadState(
+				new LWinStateKey(getWinId(), getChooseMode()));
+		if (state != null)
+			setVHLState(state);
+	}
+
+	/**
+	 * Gets filtering settings
+	 * 
+	 * @return filtering settings (null allowed)
+	 */
+	public VHLFilterState getFiltering() {
+		return null;
+	}
+
+	/**
+	 * Sets filtering
+	 * 
+	 * @param filtering
+	 *            settings (null allowed)
+	 */
+	public void setFiltering(VHLFilterState filtering) {
 
 	}
 
+	/**
+	 * Gets sorting settings
+	 * 
+	 * @return sorting settings (null allowed)
+	 */
+	public VHLSortState getSorting() {
+		return null;
+	}
+
+	/**
+	 * Sets the sorting
+	 * 
+	 * @param sorting
+	 *            settings (null allowed)
+	 */
+	public void setSorting(VHLSortState sorting) {
+
+	}
+
+	/**
+	 * {@link BaseListWindow Base list window} state
+	 *
+	 */
+	public class BLWState extends VHLState {
+		private static final long serialVersionUID = -6905266860844604689L;
+		VHLFilterState filtering;
+		VHLSortState sorting;
+		VHLState ancestor;
+
+		public BLWState() {
+			super(1);
+		}
+
+		public BLWState(VHLFilterState filtering, VHLSortState sorting,
+				VHLState ancestor) {
+			this();
+			this.filtering = filtering;
+			this.sorting = sorting;
+			this.ancestor = ancestor;
+		}
+
+		public VHLFilterState getFiltering() {
+			return filtering;
+		}
+
+		public void setFiltering(VHLFilterState filtering) {
+			this.filtering = filtering;
+		}
+
+		public VHLSortState getSorting() {
+			return sorting;
+		}
+
+		public void setSorting(VHLSortState sorting) {
+			this.sorting = sorting;
+		}
+
+		public VHLState getAncestor() {
+			return ancestor;
+		}
+
+		public void setAncestor(VHLState ancestor) {
+			this.ancestor = ancestor;
+		}
+	}
+
+	@Override
+	public void setVHLState(VHLState state) {
+		if (state == null)
+			return;
+		BLWState s = (BLWState) state;
+		super.setVHLState(s.getAncestor());
+		setSorting(s.getSorting());
+		setFiltering(s.getFiltering());
+	}
+
+	@Override
+	public VHLState getVHLState() {
+		return new BLWState(getFiltering(), getSorting(), super.getVHLState());
+	}
 }

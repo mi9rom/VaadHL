@@ -7,10 +7,14 @@ import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.utl.helper.TableHelper;
+import com.vaadHL.utl.helper.TableState;
+import com.vaadHL.utl.state.VHLSortState;
+import com.vaadHL.utl.state.VHLState;
 import com.vaadHL.window.EM.SingIeItemFWindow;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeLWMultiMode;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Table;
@@ -31,7 +35,7 @@ public class LTabWindow extends LWindow {
 
 	public LTabWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, AppContext appContext) {
+			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
 		super(winId, caption, permChecker, customize, chooseMode, readOnly,
 				appContext);
 
@@ -161,8 +165,8 @@ public class LTabWindow extends LWindow {
 	@Override
 	public void refresh() {
 		/*
-		 * Attention: this doesn't refresh any container. Refresh container if
-		 * , for instance, you would like to reload data from a database .
+		 * Attention: this doesn't refresh any container. Refresh container if ,
+		 * for instance, you would like to reload data from a database .
 		 */
 		table.refreshRowCache();
 	}
@@ -185,6 +189,116 @@ public class LTabWindow extends LWindow {
 					table.setValue(null);
 			}
 		});
+
+	}
+
+	// ------- State handling -------
+
+	/**
+	 * Table state (without sorting and filtering) + ancestor state
+	 * 
+	 *
+	 */
+	public class LTabWinState extends VHLState {
+		private static final long serialVersionUID = -1970124421143425782L;
+		TableState tableState;
+		VHLState acestorState;
+
+		public LTabWinState(TableState tableState, VHLState belowState) {
+			super(1);
+			this.tableState = tableState;
+			this.acestorState = belowState;
+		}
+
+		public TableState getTableState() {
+			return tableState;
+		}
+
+		public void setTableState(TableState tableState) {
+			this.tableState = tableState;
+		}
+
+		public VHLState getAncestorState() {
+			return acestorState;
+		}
+
+		public void setAncestorState(VHLState belowState) {
+			this.acestorState = belowState;
+		}
+
+	}
+
+	@Override
+	public VHLState getVHLState() {
+		try {
+			return new LTabWinState(new TableState(table), super.getVHLState());
+		} catch (Exception e) {
+			getMsgs().showError("VHL-026", e);
+			return null;
+		}
+	}
+
+	@Override
+	public void setVHLState(VHLState state) {
+		if (state == null)
+			return;
+		try {
+			LTabWinState s = (LTabWinState) state;
+			super.setVHLState(s.getAncestorState());
+			s.getTableState().applyTo(table);
+		} catch (Exception e) {
+			getMsgs().showError("VHL-022", e);
+		}
+	}
+
+	/**
+	 * Sorting settings for a table
+	 *
+	 */
+	public class LTWSortState extends VHLSortState {
+		Object column;
+		boolean ascending;
+
+		public LTWSortState(Object column, boolean ascending) {
+			super();
+			this.column = column;
+			this.ascending = ascending;
+		}
+
+		public Object getColumn() {
+			return column;
+		}
+
+		public void setColumn(Object column) {
+			this.column = column;
+		}
+
+		public boolean isAscending() {
+			return ascending;
+		}
+
+		public void setAscending(boolean ascending) {
+			this.ascending = ascending;
+		}
+
+		private static final long serialVersionUID = 7655038815071638086L;
+
+	}
+
+	@Override
+	public VHLSortState getSorting() {
+		return new LTWSortState(table.getSortContainerPropertyId(),
+				table.isSortAscending());
+	}
+
+	@Override
+	public void setSorting(VHLSortState sorting) {
+		if (sorting == null) {
+			return;
+		}
+		LTWSortState so = (LTWSortState) sorting;
+		table.setSortContainerPropertyId(so.getColumn());
+		table.setSortAscending(so.isAscending());
 
 	}
 

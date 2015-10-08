@@ -14,16 +14,26 @@
  * the License.
  */
 
-package com.vaadHL.window.base;
+package com.vaadHL.utl.state;
 
 /**
-* List window customization for all launch modes.
-* 
-* @author Miroslaw Romaniuk
-*
-*/
-public interface ICustomizeLWMultiMode {
-  
-	ICustomizeListWindow getChooseMode();
-	ICustomizeListWindow getNoChooseMode();
+ * 
+ * Objects state manipulation
+ *
+ */
+public interface IStateVHL {
+	/**
+	 * Gets an object state
+	 * 
+	 * @return the objects state
+	 */
+	public VHLState getVHLState();
+
+	/**
+	 * Sets an object state
+	 * 
+	 * @param state
+	 *            the state to set
+	 */
+	public void setVHLState(VHLState state);
 }

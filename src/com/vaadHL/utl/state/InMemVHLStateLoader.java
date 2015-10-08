@@ -14,18 +14,31 @@
  * the License.
  */
 
-package com.vaadHL.window.base;
+package com.vaadHL.utl.state;
+
+import java.util.HashMap;
 
 /**
- * Customization of form editing window.
- * @author 
+ * Simple in-memory implementation of the {@link IVHLStateLoader} interface.
  *
  */
-public interface ICustomizeFWin extends ICustomizeEditWin {
+public class InMemVHLStateLoader implements IVHLStateLoader {
 
-	/**
-	 * Whether to show the OK & Cancel buttons. If not, the close button is shown instead.
-	 * @return true = show
-	 */
-	boolean isShowOKCancel();
+	HashMap<Object, VHLState> container;
+
+	private HashMap<Object, VHLState> getContainer() {
+		if (container == null)
+			container = new HashMap<>();
+		return container;
+	}
+
+	@Override
+	public void saveState(Object key, VHLState state) {
+		getContainer().put(key, state);
+	}
+
+	@Override
+	public VHLState loadState(Object key) {
+		return getContainer().get(key);
+	}
 }

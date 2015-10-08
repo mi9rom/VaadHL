@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadHL.window.base;
+package com.vaadHL.window.customize;
 
 /**
  * Simple implementation of the {@link ICustomizeListWindow} list window
@@ -23,7 +23,7 @@ package com.vaadHL.window.base;
  * @author Miroslaw Romaniuk
  *
  */
-public class LWCustomizeLM implements ICustomizeListWindow {
+public class LWCustomizeLM extends CustomizeBaseWin implements ICustomizeListWindow {
 
 	/**
 	 * Show the Details button
@@ -45,54 +45,12 @@ public class LWCustomizeLM implements ICustomizeListWindow {
 	 * Show the View button
 	 */
 	boolean viewFunc = true;
-
 	DoubleClickAc doubleClickAc = DoubleClickAc.CHOOSE;
-
+	
 	public LWCustomizeLM() {
 
 	}
 
-	public LWCustomizeLM(boolean details, boolean add, boolean delete,
-			boolean edit, boolean view, DoubleClickAc doubleClickAc) {
-		super();
-		this.detailsFunc = details;
-		this.addFunc = add;
-		this.deleteFunc = delete;
-		this.editFunc = edit;
-		this.viewFunc = view;
-		this.doubleClickAc = doubleClickAc;
-	}
-
-	public void fullFeatures() {
-		detailsFunc = true;
-		addFunc = true;
-		deleteFunc = true;
-		editFunc = true;
-		viewFunc = true;
-	}
-
-	public void noFeatures() {
-		detailsFunc = false;
-		addFunc = false;
-		deleteFunc = false;
-		editFunc = false;
-		viewFunc = false;
-	}
-
-	public void listOnly() {
-		noFeatures();
-	}
-
-	public void detailsOnly() {
-		noFeatures();
-		detailsFunc = true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.vaadHL.window.base.ILWLaunchMode#isDetails()
-	 */
 	@Override
 	public boolean isDetailsFunc() {
 		return detailsFunc;
@@ -146,4 +104,5 @@ public class LWCustomizeLM implements ICustomizeListWindow {
 		this.doubleClickAc = doubleClickAc;
 	}
 
+	
 }

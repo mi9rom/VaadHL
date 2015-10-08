@@ -19,7 +19,7 @@ package com.vaadHL.utl.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vaadHL.AppContext;
+import com.vaadHL.IAppContext;
 import com.vaadHL.utl.data.WrongObjectTypeException;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
@@ -50,20 +50,20 @@ public class Action implements IActionsManipulate {
 	Command command;
 	boolean enabled = true;
 	boolean visible = true;
-	AppContext appContext;
+	IAppContext appContext;
 
-	public Action(AppContext appContext, int actionId) {
+	public Action(IAppContext appContext, int actionId) {
 		this.id = actionId;
 		this.appContext = appContext;
 
 	}
 
-	public Action(AppContext appContext, int actionId, Command command,
+	public Action(IAppContext appContext, int actionId, Command command,
 			Object... objs) {
 		this(appContext, actionId, command, true, true, true, objs);
 	}
 
-	public Action(AppContext appContext, int actionId, Command command,
+	public Action(IAppContext appContext, int actionId, Command command,
 			boolean runAction, boolean enabling, boolean hiding, Object... objs) {
 		this.id = actionId;
 		this.command = command;
@@ -295,6 +295,11 @@ public class Action implements IActionsManipulate {
 			return (getId() == ((Action) obj).getId());
 		} else
 			return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return id;
 	}
 
 	@Override

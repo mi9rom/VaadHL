@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadHL.window.base;
+package com.vaadHL.window.customize;
 
 /**
  * Editing window customization parameters.
@@ -22,7 +22,7 @@ package com.vaadHL.window.base;
  * @author Miroslaw Romaniuk
  *
  */
-public interface ICustomizeEditWin {
+public interface ICustomizeEditWin extends ICustomizeWin{
 	/**
 	 * Before window closing if there are modifications:<br>
 	 * <li>ASK - ask to save or discard changes & close the window</li> <li>SAVE
