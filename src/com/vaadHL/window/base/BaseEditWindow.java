@@ -19,6 +19,10 @@ package com.vaadHL.window.base;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.vaadHL.IAppContext;
+import com.vaadHL.utl.action.Action;
+import com.vaadHL.utl.action.Action.Command;
+import com.vaadHL.utl.action.ActionGroup;
+import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadHL.window.customize.ICustomizeEditWin;
 import com.vaadHL.window.customize.ICustomizeEditWin.AutoSaveDiscard;
@@ -37,13 +41,13 @@ public abstract class BaseEditWindow extends BaseWindow {
 	private MWLaunchMode curWinMode = null;
 	private boolean editingMode = false;
 	private boolean readOnlyWin;
-
 	private ICustomizeEditWin customize;
+	protected ActionGroup crudActions;
 
 	public BaseEditWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeEditWin customize,
 			MWLaunchMode launchMode, IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption,customize, permChecker, appContext);
+		super(winId, caption, customize, permChecker, appContext);
 		if (!approvedToOpen)
 			return;
 		this.customize = customize;
@@ -62,6 +66,9 @@ public abstract class BaseEditWindow extends BaseWindow {
 						+ getI18S("MVHL-015"));
 				return;
 			}
+
+			if (isReadOnlyWin())
+				crudActions.setEnabled(false);
 		}
 
 		if (this.launchMode == MWLaunchMode.EDIT && !hasEditPerm()) {
@@ -78,7 +85,80 @@ public abstract class BaseEditWindow extends BaseWindow {
 			approvedToOpen = false;
 			setNotPermitedContent(getWinId() + "VHL-018: "
 					+ getI18S("MVHL-018"));
+			return;
 		}
+	}
+
+	@Override
+	protected void createActions() {
+		super.createActions();
+
+		ActionGroup agCommit = new ActionGroup(ActionsIds.GAC_COMMIT);
+
+		agCommit.put(new Action(getAppContext(),
+				ActionsIds.AC_COMMIT_AND_CLOSE, new Command() {
+					@Override
+					public void run(Action action) {
+						commitAndClose();
+					}
+				}, true));
+
+		agCommit.put(new Action(getAppContext(),
+				ActionsIds.AC_CANCEL_AND_CLOSE, new Command() {
+					@Override
+					public void run(Action action) {
+						cancelAndClose();
+					}
+				}, true));
+
+		agCommit.put(new Action(getAppContext(), ActionsIds.AC_SAVE_ASK_MSG,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						saveAskMsg(null);
+					}
+				}, true));
+
+		agCommit.put(new Action(getAppContext(), ActionsIds.AC_DISCARD_ASK_MSG,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						discardAskMsg(null);
+					}
+				}, true));
+
+		addActionsAndChkPerm(agCommit);
+
+		ActionGroup newActions = new ActionGroup(ActionsIds.AC_BASE_EDIT_WIN);
+
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_DELETE,
+				new Command() {
+
+					@Override
+					public void run(Action action) {
+						deleteAskMsg();
+					}
+				}));
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_CREATE,
+				new Command() {
+
+					@Override
+					public void run(Action action) {
+						createAskMsg();
+					}
+				}));
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_EDIT,
+				new Command() {
+
+					@Override
+					public void run(Action action) {
+						toggleEditing();
+					}
+				}));
+
+		crudActions = newActions;
+
+		addActionsAndChkPerm(newActions);
 	}
 
 	// ---------------- Window scope permission checking ------------
@@ -607,6 +687,13 @@ public abstract class BaseEditWindow extends BaseWindow {
 			setEditModeChkMsgAlways(true);
 		else
 			setEditModeChkMsgAlways(false);
+	}
+
+	/**
+	 * Toggles the editing state of the window.
+	 */
+	protected void toggleEditing() {
+		setEditModeChkMsg(!isEditingMode());
 	}
 
 	// ---------------- others ------------

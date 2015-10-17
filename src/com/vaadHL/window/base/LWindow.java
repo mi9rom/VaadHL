@@ -17,9 +17,6 @@
 package com.vaadHL.window.base;
 
 import com.vaadHL.IAppContext;
-import com.vaadHL.utl.action.Action;
-import com.vaadHL.utl.action.Action.Command;
-import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadHL.window.customize.ICustomizeLWMultiMode;
@@ -28,6 +25,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 /**
  * List window.<br>
@@ -66,10 +65,6 @@ public class LWindow extends BaseListWindow {
 		btEdit = new Button(getI18S("btEdit"));
 		btView = new Button(getI18S("btView"));
 
-		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
-		ActionGroup readOnlyActions = new ActionGroup(200002);
-		Action ac;
-
 		btOk.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -4027804800730671542L;
 
@@ -97,60 +92,51 @@ public class LWindow extends BaseListWindow {
 			}
 		});
 
-		btDetails.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = 6988932903821049711L;
+		getAction(ActionsIds.AC_DETAILS).attach(btDetails);
+		getAction(ActionsIds.AC_CREATE).attach(btCreate);
+		getAction(ActionsIds.AC_DELETE).attach(btDelete);
+		getAction(ActionsIds.AC_EDIT).attach(btEdit);
+		getAction(ActionsIds.AC_VIEW).attach(btView);
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				details();
+	}
 
-			}
-		});
+	protected MenuBar makeDefaultMenu() {
+		MenuBar mb = super.makeMainMenu();
+		if (mb == null)
+			mb = new MenuBar();
 
-		ac = new Action(getAppContext(), ActionsIds.AC_CREATE, new Command() {
+		MenuItem menEd = mb.addItem(getI18S("mnEdition"), null);
 
-			@Override
-			public void run(Action action) {
-				add();
-			}
-		}, btCreate);
-		newActions.put(ac);
-		readOnlyActions.put(ac);
+		if (isDetailsFunc())
+			getAction(ActionsIds.AC_DETAILS).attach(
+					menEd.addItem(getI18S("btDetails"), null));
+		if (isAddFunc())
+			getAction(ActionsIds.AC_CREATE).attach(
+					menEd.addItem(getI18S("btCreate"), null));
 
-		ac = new Action(getAppContext(), ActionsIds.AC_DELETE, new Command() {
+		if (isDeleteFunc())
+			getAction(ActionsIds.AC_DELETE).attach(
+					menEd.addItem(getI18S("btDelete"), null));
 
-			@Override
-			public void run(Action action) {
-				delete();
-			}
-		}, btDelete);
-		newActions.put(ac);
-		readOnlyActions.put(ac);
+		if (isEditFunc())
+			getAction(ActionsIds.AC_EDIT).attach(
+					menEd.addItem(getI18S("btEdit"), null));
+		if (isViewFunc())
+			getAction(ActionsIds.AC_VIEW).attach(
+					menEd.addItem(getI18S("btView"), null));
 
-		ac = new Action(getAppContext(), ActionsIds.AC_EDIT, new Command() {
+		MenuItem toolIt = mb.addItem(getI18S("mnTools"), null);
+		getAction(ActionsIds.AC_REFRESH).attach(
+				toolIt.addItem(getI18S("mnRefresh"), null));
+		getAction(ActionsIds.AC_DESELECT_ALL).attach(
+				toolIt.addItem(getI18S("mnUnselAll"), null));
+		addStateMenu(toolIt);
+		return mb;
+	}
 
-			@Override
-			public void run(Action action) {
-				edit();
-			}
-		}, btEdit);
-		newActions.put(ac);
-		readOnlyActions.put(ac);
-
-		btView.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -7738495347949482479L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				view();
-
-			}
-		});
-
-		addActionsAndChkPerm(newActions);
-		if (isReadOnlyWin()) {
-			readOnlyActions.setEnabled(false);
-		}
+	@Override
+	protected MenuBar makeMainMenu() {
+		return makeDefaultMenu();
 	}
 
 	/**

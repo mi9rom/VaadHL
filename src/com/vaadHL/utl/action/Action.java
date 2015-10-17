@@ -19,6 +19,10 @@ package com.vaadHL.utl.action;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
+
 import com.vaadHL.IAppContext;
 import com.vaadHL.utl.data.WrongObjectTypeException;
 import com.vaadin.ui.AbstractComponent;
@@ -51,13 +55,29 @@ public class Action implements IActionsManipulate {
 	boolean enabled = true;
 	boolean visible = true;
 	IAppContext appContext;
+	boolean permChecking=true;
+
+	
 
 	public Action(IAppContext appContext, int actionId) {
-		this.id = actionId;
-		this.appContext = appContext;
-
+		this(appContext, actionId, null);
 	}
 
+	public Action(IAppContext appContext, int actionId, Command command) {
+		this.id = actionId;
+		this.appContext = appContext;
+		this.command = command;
+	}
+
+	public Action(IAppContext appContext, int actionId, Command command ,boolean enabled) {
+		this.id = actionId;
+		this.appContext = appContext;
+		this.command = command;
+		this.enabled = enabled;
+		this.permChecking = false;
+	}
+	
+	
 	public Action(IAppContext appContext, int actionId, Command command,
 			Object... objs) {
 		this(appContext, actionId, command, true, true, true, objs);
@@ -68,9 +88,10 @@ public class Action implements IActionsManipulate {
 		this.id = actionId;
 		this.command = command;
 		this.appContext = appContext;
-		for (Object o : objs) {
-			attach(o, runAction, enabling, hiding);
-		}
+		if (objs != null)
+			for (Object o : objs) {
+				attach(o, runAction, enabling, hiding);
+			}
 	}
 
 	@Override
@@ -103,11 +124,11 @@ public class Action implements IActionsManipulate {
 
 				if (o instanceof Button) {
 					listener = new Button.ClickListener() {
-						private static final long serialVersionUID = 1L;
+						private static final long serialVersionUID = -6387554438687264016L;
 
 						@Override
 						public void buttonClick(ClickEvent event) {
-							if (enabled)
+							if (enabled && command != null)
 								command.run(Action.this);
 						}
 					};
@@ -119,17 +140,29 @@ public class Action implements IActionsManipulate {
 
 						@Override
 						public void menuSelected(MenuItem selectedItem) {
-							if (enabled)
+							if (enabled && command != null)
 								command.run(Action.this);
 						}
 					};
 					((MenuItem) o).setCommand((MenuBar.Command) listener);
+				} else if (o instanceof ContextMenuItem) {
+					listener = new ContextMenuItemClickListener() {
+						@Override
+						public void contextMenuItemClicked(
+								ContextMenuItemClickEvent event) {
+							if (enabled && command != null)
+								command.run(Action.this);
+						}
+					};
+					((ContextMenuItem) o)
+							.addItemClickListener((ContextMenuItemClickListener) listener);
 				} else {
 					throw new WrongObjectTypeException(
-							"VHL-014: Only Buttons and MenuItems are allowed to attach.");
+							"VHL-014: Only Buttons, MenuItems, ContextMenus are allowed to attach.");
 				}
 			}
 			getAttached().put(o, new ObjInfo(o, listener, enabling, hiding));
+			setEnabled(o, enabled);
 		}
 	}
 
@@ -170,6 +203,9 @@ public class Action implements IActionsManipulate {
 				((Button) o).removeClickListener(al);
 		} else if (o instanceof MenuItem) {
 			((MenuItem) o).setCommand(null);
+		} else if (o instanceof ContextMenuItem) {
+			((ContextMenuItem) o)
+					.removeItemClickListener((ContextMenuItemClickListener) objInfo.listener);
 		}
 	}
 
@@ -209,6 +245,9 @@ public class Action implements IActionsManipulate {
 		if (force == false && this.enabled == enabled)
 			return; // no change
 		this.enabled = enabled;
+		
+		if (attached == null)
+			return;
 		if (changeAttached) {
 			for (ObjInfo oi : attached.values()) {
 				if (oi.enabling)
@@ -230,10 +269,13 @@ public class Action implements IActionsManipulate {
 	 * @param enabled
 	 */
 	protected void setEnabled(Object o, boolean enabled) {
+		
 		if (o instanceof AbstractComponent) {
 			((AbstractComponent) o).setEnabled(enabled);
 		} else if (o instanceof MenuItem) {
 			((MenuItem) o).setEnabled(enabled);
+		} else if (o instanceof ContextMenuItem) {
+			((ContextMenuItem) o).setEnabled(enabled);
 		} else {
 			throw new WrongObjectTypeException("VHL-013: "
 					+ appContext.getI18().getString("MVHL-013")
@@ -248,6 +290,8 @@ public class Action implements IActionsManipulate {
 
 	@Override
 	public void setVisible(boolean visible, boolean force) {
+		if (attached == null)
+			return;
 		if (force == false && this.visible == visible)
 			return; // no change
 		this.visible = visible;
@@ -266,10 +310,14 @@ public class Action implements IActionsManipulate {
 	 * @param visible
 	 */
 	protected void setVisible(Object o, boolean visible) {
+		if (attached == null)
+			return;
 		if (o instanceof AbstractComponent) {
 			((AbstractComponent) o).setVisible(visible);
 		} else if (o instanceof MenuItem) {
 			((MenuItem) o).setVisible(visible);
+		} else if (o instanceof ContextMenuItem) {
+			((ContextMenuItem) o).setEnabled(enabled); // not possible to hide
 		} else {
 			throw new WrongObjectTypeException(
 					"VHL-014: Cannot control visibility state of the object type:"
@@ -333,4 +381,8 @@ public class Action implements IActionsManipulate {
 
 	}
 
+	public boolean isPermChecking() {
+		return permChecking;
+	}
+	
 }

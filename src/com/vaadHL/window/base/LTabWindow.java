@@ -2,11 +2,6 @@ package com.vaadHL.window.base;
 
 import java.util.Set;
 
-import org.vaadin.peter.contextmenu.ContextMenu;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
-import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
-
 import com.vaadHL.IAppContext;
 import com.vaadHL.utl.helper.TableHelper;
 import com.vaadHL.utl.helper.TableState;
@@ -30,9 +25,6 @@ public class LTabWindow extends LWindow {
 	private static final long serialVersionUID = 9053183490003952417L;
 	protected Table table;
 	protected TableHelper tableHelper;
-	private ContextMenuItem mnRefersh;
-	private ContextMenuItem mnUnselAll;
-
 	public LTabWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
 			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
@@ -56,8 +48,7 @@ public class LTabWindow extends LWindow {
 			}
 		});
 
-		createTabContextMenu();
-
+		makeContextMenu().setAsContextMenuOf(table);
 	}
 
 	protected void onTableCLick(ItemClickEvent event) {
@@ -175,28 +166,6 @@ public class LTabWindow extends LWindow {
 	public void deselectAll() {
 		table.setValue(null);
 	}
-	
-	/**
-	 * Creates table context menu
-	 */
-	protected void createTabContextMenu() {
-		final ContextMenu contextMenu = new ContextMenu();
-		mnRefersh = contextMenu.addItem(getI18S("mnRefresh"));
-		mnUnselAll = contextMenu.addItem(getI18S("mnUnselAll"));
-
-		contextMenu.setAsContextMenuOf(table);
-		contextMenu.addItemClickListener(new ContextMenuItemClickListener() {
-			@Override
-			public void contextMenuItemClicked(ContextMenuItemClickEvent event) {
-				if (event.getSource().equals(mnRefersh))
-					refresh();
-				else if (event.getSource().equals(mnUnselAll))
-
-					deselectAll();
-			}
-		});
-	}
-			
 	// ------- State handling -------
 
 	/**
@@ -304,7 +273,7 @@ public class LTabWindow extends LWindow {
 		LTWSortState so = (LTWSortState) sorting;
 		table.setSortContainerPropertyId(so.getColumn());
 		table.setSortAscending(so.isAscending());
-
 	}
 
+	
 }

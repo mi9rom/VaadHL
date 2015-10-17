@@ -14,7 +14,6 @@
  */
 
 package com.vaadHL.utl.action;
-
 import com.vaadHL.i18n.I18Sup;
 
 /**
@@ -28,10 +27,32 @@ public class ActionsIds {
 	public final static int AC_DELETE = 4;
 	public final static int AC_PREV_ITM = 5;
 	public final static int AC_NEXT_ITM = 6;
-
+	public final static int AC_DETAILS = 7;
+	public final static int AC_VIEW = 8;
+	
+	public static final int AC_COMMIT_AND_CLOSE = 20;
+	public static final int AC_CANCEL_AND_CLOSE = 21;
+	public static final int AC_SAVE_ASK_MSG = 22;
+	public static final int AC_DISCARD_ASK_MSG = 23;
+	
+	public static final int GAC_BASE = 40;
+	public static final int AC_CLOSE = 41;
+	public final static int AC_REFRESH = 42;
+	public static final int GAC_BASE_LW = 45;
+	public final static int AC_DESELECT_ALL = 48;
+		
+	public static final int GAC_F_WIN = 61;
+	public static final int GAC_COMMIT = 62;
+	public static final int AC_BASE_EDIT_WIN = 71;
+	
+	public static final int AC_SAVE_STATE = 91;
+	public static final int AC_RESTORE_STATE = 92;
+	
 	public final static int GAC_FWIN = 100001;
 	public final static int GAC_LWIN = 100002;
-
+	
+	
+	
 	public ActionsIds() {
 	}
 
@@ -49,7 +70,12 @@ public class ActionsIds {
 			return i18.getString("AC_PREV_ITM");
 		case AC_NEXT_ITM:
 			return i18.getString("AC_NEXT_ITM");
-
+		case AC_CLOSE:
+			return i18.getString("btClose");
+		case AC_REFRESH:
+			return i18.getString("mnRefresh");
+		case AC_DESELECT_ALL:
+			return i18.getString("mnUnselAll");
 		default:
 			return i18.getString("AC_UNKNOWN");
 		}

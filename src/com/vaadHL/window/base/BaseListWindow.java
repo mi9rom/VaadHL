@@ -18,7 +18,14 @@ package com.vaadHL.window.base;
 
 import java.io.Serializable;
 
+import org.vaadin.peter.contextmenu.ContextMenu;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
+
 import com.vaadHL.IAppContext;
+import com.vaadHL.utl.action.Action;
+import com.vaadHL.utl.action.Action.Command;
+import com.vaadHL.utl.action.ActionGroup;
+import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.utl.state.VHLFilterState;
 import com.vaadHL.utl.state.VHLSortState;
 import com.vaadHL.utl.state.VHLState;
@@ -52,6 +59,7 @@ public abstract class BaseListWindow extends BaseWindow {
 	private ChoosingMode chooseMode = null;
 	private boolean readOnlyWin;
 	ICustomizeListWindow customize;
+	protected ActionGroup readOnlyActions;
 
 	public BaseListWindow(String winId, String caption,
 			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
@@ -61,12 +69,88 @@ public abstract class BaseListWindow extends BaseWindow {
 						.getNoChooseMode() : customize.getChooseMode(),
 				permChecker, appContext);
 
+		if (!approvedToOpen)
+			return;
+
 		this.chooseMode = chooseMode;
 		this.readOnlyWin = readOnly;
 		if (chooseMode == ChoosingMode.NO_CHOOSE)
 			this.customize = customize.getNoChooseMode();
 		else
 			this.customize = customize.getChooseMode();
+
+		if (isReadOnlyWin()) {
+			readOnlyActions.setEnabled(false);
+		}
+	}
+
+	@Override
+	protected void createActions() {
+		super.createActions();
+
+		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_BASE_LW);
+		newActions.put(new Action(getAppContext(), ActionsIds.AC_DESELECT_ALL,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						deselectAll();
+						;
+					}
+		},true));
+
+		readOnlyActions = new ActionGroup(200002);
+		Action ac;
+
+		ac = new Action(getAppContext(), ActionsIds.AC_DETAILS, new Command() {
+
+			@Override
+			public void run(Action action) {
+				details();
+			}
+		},true);
+		newActions.put(ac);
+
+		ac = new Action(getAppContext(), ActionsIds.AC_CREATE, new Command() {
+
+			@Override
+			public void run(Action action) {
+				add();
+			}
+		});
+		newActions.put(ac);
+		readOnlyActions.put(ac);
+
+		ac = new Action(getAppContext(), ActionsIds.AC_DELETE, new Command() {
+
+			@Override
+			public void run(Action action) {
+				delete();
+			}
+		});
+		newActions.put(ac);
+		readOnlyActions.put(ac);
+
+		ac = new Action(getAppContext(), ActionsIds.AC_EDIT, new Command() {
+
+			@Override
+			public void run(Action action) {
+				edit();
+			}
+		});
+		newActions.put(ac);
+		readOnlyActions.put(ac);
+
+		ac = new Action(getAppContext(), ActionsIds.AC_VIEW, new Command() {
+
+			@Override
+			public void run(Action action) {
+				edit();
+			}
+		}, true);
+		newActions.put(ac);
+
+		addActionsAndChkPerm(newActions);
+
 	}
 
 	public boolean isDetailsFunc() {
@@ -359,7 +443,7 @@ public abstract class BaseListWindow extends BaseWindow {
 	}
 
 	/**
-	 * Remove all selecions
+	 * Removes all selections
 	 * 
 	 */
 	public void deselectAll() {
@@ -412,7 +496,8 @@ public abstract class BaseListWindow extends BaseWindow {
 
 		@Override
 		public int hashCode() {
-			return getChooseMode().hashCode() + getWinId().hashCode() << 2;
+			return getChooseMode() == null ? 0 : getChooseMode().hashCode()
+					+ getWinId().hashCode() << 2;
 		}
 	}
 
@@ -535,4 +620,18 @@ public abstract class BaseListWindow extends BaseWindow {
 	public VHLState getVHLState() {
 		return new BLWState(getFiltering(), getSorting(), super.getVHLState());
 	}
+
+	/**
+	 * Creates table context menu
+	 */
+	protected ContextMenu makeContextMenu() {
+		final ContextMenu contextMenu = new ContextMenu();
+		ContextMenuItem mnRefersh = contextMenu.addItem(getI18S("mnRefresh"));
+		getAction(ActionsIds.AC_REFRESH).attach(mnRefersh);
+
+		ContextMenuItem mnUnselAll = contextMenu.addItem(getI18S("mnUnselAll"));
+		getAction(ActionsIds.AC_DESELECT_ALL).attach(mnUnselAll);
+		return contextMenu;
+	}
+
 }

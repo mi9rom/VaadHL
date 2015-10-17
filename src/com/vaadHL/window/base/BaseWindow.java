@@ -16,10 +16,12 @@
 
 package com.vaadHL.window.base;
 
-import com.vaadHL.AppContext;
 import com.vaadHL.IAppContext;
 import com.vaadHL.i18n.I18Sup;
+import com.vaadHL.utl.action.Action;
+import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
+import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.utl.state.IStateVHL;
 import com.vaadHL.utl.state.ScreenInfo;
@@ -32,6 +34,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -46,6 +50,8 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	private static final long serialVersionUID = 3460211791860318900L;
 	private String winId;
 	protected IWinPermChecker permChecker;
+	private MenuBar menuBar; // main, window menu bar
+
 	/**
 	 * Can window be opened in a normal way.
 	 */
@@ -72,12 +78,17 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 		this.permChecker = permChecker;
 		this.customize = customize;
 		setCaption(makeTitle(winId, caption));
+
 		if (!canShow()) {
 			approvedToOpen = false;
 			setNotPermitedContent(winId + "- " + getI18S("MVHL-021"));
-		} else
-			approvedToOpen = true;
+			return;
+		}
+		approvedToOpen = true;
+
+		createActions();
 		initConstructorWidgets();
+
 	}
 
 	/**
@@ -179,6 +190,16 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	}
 
 	/**
+	 * 
+	 * @param id
+	 *            the identifier of the Action
+	 * @return the Action of identifier id or null if not found
+	 */
+	public Action getAction(int id) {
+		return (Action) getActions().getActionOrGr(id);
+	}
+
+	/**
 	 * Checks if there is permission to show the window.
 	 * 
 	 * @return Permission to show the window (true = permitted)
@@ -194,7 +215,7 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	 * Makes (does not display) the upper area of the window content.
 	 */
 	public Component makeUpperArea() {
-		return null;
+		return (makeMainMenu());
 	}
 
 	/**
@@ -284,11 +305,20 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	}
 
 	/**
-	 * Adds action group to the window actions.
+	 * Adds an action group to the window actions.
 	 * 
 	 * @param ag
 	 */
 	protected void addActions(ActionGroup ag) {
+		getActions().put(ag);
+	}
+
+	/**
+	 * Adds an action to the window actions.
+	 * 
+	 * @param ag
+	 */
+	protected void addActions(Action ag) {
 		getActions().put(ag);
 	}
 
@@ -377,5 +407,69 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 		super.attach();
 		if (isAutoRestoreState())
 			restoreState();
+	}
+
+	// -------------- the Main Menu -------------------
+
+	public MenuBar getMenuBar() {
+		return menuBar;
+	}
+
+	/**
+	 * Makes (does not display) the main window menu
+	 */
+	protected MenuBar makeMainMenu() {
+		return null;
+	}
+
+	protected void addStateMenu(MenuItem mit) {
+
+		getAction(ActionsIds.AC_RESTORE_STATE).attach(
+				mit.addItem(getI18S("mnStateRestore"), null));
+
+		getAction(ActionsIds.AC_SAVE_STATE).attach(
+				mit.addItem(getI18S("mnStateSave"), null));
+	}
+
+	/**
+	 * Actions to create inside the BaseWindow constructor
+	 */
+	protected void createActions() {
+
+		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_BASE);
+
+		newActions.put(new Action(appContext, ActionsIds.AC_REFRESH,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						refresh();
+					}
+				}, true));
+
+		newActions.put(new Action(appContext, ActionsIds.AC_CLOSE,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						close();
+					}
+				}, true));
+
+		newActions.put(new Action(appContext, ActionsIds.AC_SAVE_STATE,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						saveState();
+					}
+				}, true));
+
+		newActions.put(new Action(appContext, ActionsIds.AC_RESTORE_STATE,
+				new Command() {
+					@Override
+					public void run(Action action) {
+						restoreState();
+					}
+				}, true));
+
+		addActionsAndChkPerm(newActions);
 	}
 }

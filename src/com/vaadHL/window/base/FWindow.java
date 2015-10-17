@@ -24,10 +24,10 @@ import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadHL.window.customize.ICustomizeFWin;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 /**
  * Form window <br>
@@ -63,36 +63,40 @@ public abstract class FWindow extends BaseEditWindow {
 			return;
 		this.customize = customize;
 		btCreate = new Button(getI18S("btCreate"));
+		getAction(ActionsIds.AC_CREATE).attach(btCreate);
 		btDelete = new Button(getI18S("btDelete"));
+		getAction(ActionsIds.AC_DELETE).attach(btDelete);
 		btOk = new Button(getI18S("btOK"));
+		getAction(ActionsIds.AC_COMMIT_AND_CLOSE).attach(btOk);
 		btPrevRec = new Button("<");
+		getAction(ActionsIds.AC_PREV_ITM).attach(btPrevRec);
 		btNextRec = new Button(">");
+		getAction(ActionsIds.AC_NEXT_ITM).attach(btNextRec);
 		btCancel = new Button(getI18S("btCancel"));
+		getAction(ActionsIds.AC_CANCEL_AND_CLOSE).attach(btCancel);
 		btSave = new Button(getI18S("btSave"));
+		getAction(ActionsIds.AC_SAVE_ASK_MSG).attach(btSave);
 		btDiscard = new Button(getI18S("btDiscard"));
+		getAction(ActionsIds.AC_DISCARD_ASK_MSG).attach(btDiscard);
 		btClose = new Button(getI18S("btClose"));
+		getAction(ActionsIds.AC_CLOSE).attach(btClose);
 		btEdit = new Button(getI18S("btEdit"));
+		getAction(ActionsIds.AC_EDIT).attach(btEdit);
 
-		btOk.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -1556072964935330377L;
+	}
 
-			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				commitAndClose();
-			}
-		});
-
-		// new actions added
-		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_FWIN);
+	@Override
+	protected void createActions() {
+		super.createActions();
+		ActionGroup newActions = new ActionGroup(ActionsIds.GAC_F_WIN);
 
 		newActions.put(new Action(getAppContext(), ActionsIds.AC_PREV_ITM,
 				new Command() {
-
 					@Override
 					public void run(Action action) {
 						moveToPrevRecordChk();
 					}
-				}, btPrevRec));
+				}));
 
 		newActions.put(new Action(getAppContext(), ActionsIds.AC_NEXT_ITM,
 				new Command() {
@@ -101,82 +105,32 @@ public abstract class FWindow extends BaseEditWindow {
 					public void run(Action action) {
 						moveToNextRecordChk();
 					}
-				}, btNextRec));
-
-		btCancel.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -7802414620464909596L;
-
-			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				cancelAndClose();
-			}
-
-		});
-
-		btSave.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -8503804187231367058L;
-
-			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				saveAskMsg(null);
-			}
-		});
-
-		btDiscard.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -8254287623127616951L;
-
-			@Override
-			public void buttonClick(com.vaadin.ui.Button.ClickEvent event) {
-				discardAskMsg(null);
-			}
-		});
-
-		btClose.addClickListener(new ClickListener() {
-			private static final long serialVersionUID = -1610492227149824003L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				close();
-
-			}
-		});
-
-		newActions.put(new Action(getAppContext(), ActionsIds.AC_DELETE,
-				new Command() {
-
-					@Override
-					public void run(Action action) {
-						deleteAskMsg();
-					}
-				}, btDelete));
-
-		newActions.put(new Action(getAppContext(), ActionsIds.AC_CREATE,
-				new Command() {
-
-					@Override
-					public void run(Action action) {
-						createAskMsg();
-					}
-				}, btCreate));
-
-		newActions.put(new Action(getAppContext(), ActionsIds.AC_EDIT,
-				new Command() {
-
-					@Override
-					public void run(Action action) {
-						toggleEditing();
-					}
-				}, btEdit));
-
+				}));
 		addActionsAndChkPerm(newActions);
 
 	}
 
-	/**
-	 * Toggles the editing state of the window.
-	 */
-	protected void toggleEditing() {
-		setEditModeChkMsg(!isEditingMode());
+	protected MenuBar makeDefaultMenu() {
+		MenuBar mb = super.makeMainMenu();
+		if (mb == null)
+			mb = new MenuBar();
+
+		MenuItem menEd = mb.addItem(getI18S("mnEdition"), null);
+		getAction(ActionsIds.AC_EDIT).attach(
+				menEd.addItem(getI18S("btEdit"), null));
+		getAction(ActionsIds.AC_DELETE).attach(
+				menEd.addItem(getI18S("btDelete"), null));
+		getAction(ActionsIds.AC_CREATE).attach(
+				menEd.addItem(getI18S("btCreate"), null));
+
+		MenuItem toolIt = mb.addItem(getI18S("mnTools"), null);
+		addStateMenu(toolIt);
+		return mb;
+	}
+
+	@Override
+	protected MenuBar makeMainMenu() {
+		return makeDefaultMenu();
 	}
 
 	/**
@@ -187,11 +141,11 @@ public abstract class FWindow extends BaseEditWindow {
 	public Component makeButtonsPanel() {
 		HorizontalLayout bottPanel = new HorizontalLayout();
 		if (getLaunchMode() == MWLaunchMode.VIEW_EDIT) {
-
 			bottPanel.addComponent(btCreate);
 			bottPanel.addComponent(btDelete);
 			bottPanel.addComponent(btEdit);
-
+		} else {
+			crudActions.setVisible(false);
 		}
 
 		// record move buttons
@@ -219,6 +173,7 @@ public abstract class FWindow extends BaseEditWindow {
 			bottPanel.addComponent(btCancel);
 		} else if (getLaunchMode() == MWLaunchMode.DELETE) {
 			bottPanel.addComponent(btDelete);
+			getAction(ActionsIds.AC_DELETE).setVisible(true);
 			bottPanel.addComponent(btCancel);
 		} else if (getLaunchMode() == MWLaunchMode.VIEW_ONLY)
 			bottPanel.addComponent(btClose);
@@ -291,4 +246,5 @@ public abstract class FWindow extends BaseEditWindow {
 		} else
 			return false;
 	}
+
 }
