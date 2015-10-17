@@ -51,7 +51,6 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	private static final long serialVersionUID = 3460211791860318900L;
 	private String winId;
 	protected IWinPermChecker permChecker;
-	
 
 	private MenuBar menuBar; // main, window menu bar
 
@@ -238,7 +237,10 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	 * Makes (does not display) the upper area of the window content.
 	 */
 	public Component makeUpperArea() {
-		return (makeMainMenu());
+		if (customize.isShowMenu())
+			return (makeMainMenu());
+		else
+			return null;
 	}
 
 	/**
@@ -495,7 +497,7 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 
 		addActionsAndChkPerm(newActions);
 	}
-	
+
 	public IWinPermChecker getPermChecker() {
 		return permChecker;
 	}

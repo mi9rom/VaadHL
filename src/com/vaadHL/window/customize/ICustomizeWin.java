@@ -34,4 +34,11 @@ public interface ICustomizeWin {
 	 * @return true - autorestore is on
 	 */
 	public boolean isAutoRestoreState();
+
+	/**
+	 * Do show upper menu.
+	 * 
+	 * @return true - show
+	 */
+	public boolean isShowMenu();
 }

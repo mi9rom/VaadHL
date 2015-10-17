@@ -23,31 +23,44 @@ package com.vaadHL.window.customize;
  * @author Miroslaw Romaniuk
  *
  */
-public class LWCustomizeLM extends CustomizeBaseWin implements ICustomizeListWindow {
+public class LWCustomizeLM extends CustomizeBaseWin implements
+		ICustomizeListWindow {
 
 	/**
 	 * Show the Details button
 	 */
-	boolean detailsFunc = true;
+	boolean detailsFunc;
 	/**
 	 * Show the Add button
 	 */
-	boolean addFunc = true;
+	boolean addFunc;
 	/**
 	 * Show the delete button
 	 */
-	boolean deleteFunc = true;
+	boolean deleteFunc;
 	/**
 	 * Show the edit button
 	 */
-	boolean editFunc = true;
+	boolean editFunc;
 	/**
 	 * Show the View button
 	 */
-	boolean viewFunc = true;
-	DoubleClickAc doubleClickAc = DoubleClickAc.CHOOSE;
-	
+	boolean viewFunc;
+	DoubleClickAc doubleClickAc;
+
 	public LWCustomizeLM() {
+		super();
+	}
+
+	@Override
+	void setDefault() {
+		super.setDefault();
+		detailsFunc = true;
+		addFunc = true;
+		deleteFunc = true;
+		editFunc = true;
+		viewFunc = true;
+		doubleClickAc = DoubleClickAc.CHOOSE;
 
 	}
 
@@ -104,5 +117,4 @@ public class LWCustomizeLM extends CustomizeBaseWin implements ICustomizeListWin
 		this.doubleClickAc = doubleClickAc;
 	}
 
-	
 }

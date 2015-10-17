@@ -23,13 +23,25 @@ package com.vaadHL.window.customize;
  */
 public class CustomizeFWin extends CustomizeBaseWin implements ICustomizeFWin {
 
-	private boolean askSave = false;
-	private boolean askDiscard = true;
-	private AutoSaveDiscard autoSaveDiscard = AutoSaveDiscard.ASK;
-	private boolean askDelete = true;
-	private boolean askCreate = false;
-	private boolean showOKCancel = true;
-	private boolean prevNextFunc = true;
+	private boolean askSave;
+	private boolean askDiscard;
+	private AutoSaveDiscard autoSaveDiscard;
+	private boolean askDelete;
+	private boolean askCreate;
+	private boolean showOKCancel;
+	private boolean prevNextFunc;
+
+	@Override
+	void setDefault() {
+		super.setDefault();
+		askSave = false;
+		askDiscard = true;
+		autoSaveDiscard = AutoSaveDiscard.ASK;
+		askDelete = true;
+		askCreate = false;
+		showOKCancel = true;
+		prevNextFunc = true;
+	}
 
 	public void setAskSave(boolean askSave) {
 		this.askSave = askSave;

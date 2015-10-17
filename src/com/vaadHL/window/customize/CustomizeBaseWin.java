@@ -27,11 +27,16 @@ public class CustomizeBaseWin implements ICustomizeWin {
 
 	private boolean autoSaveState;
 	private boolean autoRestoreState;
+	private boolean showMenu;
 
 	public CustomizeBaseWin() {
+		setDefault();
+	}
+
+	void setDefault() {
 		autoSaveState = false;
-		autoRestoreState= false;
-		
+		autoRestoreState = false;
+		showMenu = true;
 	}
 
 	@Override
@@ -50,6 +55,15 @@ public class CustomizeBaseWin implements ICustomizeWin {
 
 	public void setAutoRestoreState(boolean autoRestoreState) {
 		this.autoRestoreState = autoRestoreState;
+	}
+
+	@Override
+	public boolean isShowMenu() {
+		return showMenu;
+	}
+
+	public void setShowMenu(boolean showMenu) {
+		this.showMenu = showMenu;
 	}
 
 }
