@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Implementation-Title: VaadHL
-Implementation-Version: 1.4.00
+Implementation-Version: 1.5.01
 Vaadin-Package-Version: 1
