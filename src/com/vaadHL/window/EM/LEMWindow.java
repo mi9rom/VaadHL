@@ -36,11 +36,11 @@ public class LEMWindow extends LTabWindow {
 	private static final long serialVersionUID = -3569392737049508383L;
 	protected EntityManager em;
 
-	public LEMWindow(String winId, String caption, IWinPermChecker masterPermChecker,
-			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
+	public LEMWindow(String winId, String caption,
+			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
 			boolean readOnly, EntityManager em, IAppContext appContext) {
-		super(winId, caption, masterPermChecker, customize, chooseMode, readOnly,
-				appContext);
+		super(winId, caption, masterPermChecker,  chooseMode,
+				readOnly, appContext);
 		this.em = em;
 		if (approvedToOpen == false)
 			return;

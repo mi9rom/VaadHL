@@ -25,10 +25,11 @@ public class LTabWindow extends LWindow {
 	private static final long serialVersionUID = 9053183490003952417L;
 	protected Table table;
 	protected TableHelper tableHelper;
+
 	public LTabWindow(String winId, String caption,
-			IWinPermChecker masterPermChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
-		super(winId, caption, masterPermChecker, customize, chooseMode, readOnly,
+			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
+			boolean readOnly, IAppContext appContext) {
+		super(winId, caption, masterPermChecker, chooseMode, readOnly,
 				appContext);
 
 		if (approvedToOpen == false)
@@ -162,10 +163,11 @@ public class LTabWindow extends LWindow {
 		table.refreshRowCache();
 	}
 
-@Override
+	@Override
 	public void deselectAll() {
 		table.setValue(null);
 	}
+
 	// ------- State handling -------
 
 	/**
@@ -275,5 +277,4 @@ public class LTabWindow extends LWindow {
 		table.setSortAscending(so.isAscending());
 	}
 
-	
 }

@@ -29,8 +29,8 @@ public class CustomizeBaseWin implements ICustomizeWin {
 	private boolean autoRestoreState;
 
 	public CustomizeBaseWin() {
-		autoSaveState = true;
-		autoRestoreState= true;
+		autoSaveState = false;
+		autoRestoreState= false;
 		
 	}
 

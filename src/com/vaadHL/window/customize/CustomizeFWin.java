@@ -21,7 +21,7 @@ package com.vaadHL.window.customize;
  * interface
  *
  */
-public class CustomizeFWin extends CustomizeBaseWin  implements ICustomizeFWin {
+public class CustomizeFWin extends CustomizeBaseWin implements ICustomizeFWin {
 
 	private boolean askSave = false;
 	private boolean askDiscard = true;
@@ -30,7 +30,6 @@ public class CustomizeFWin extends CustomizeBaseWin  implements ICustomizeFWin {
 	private boolean askCreate = false;
 	private boolean showOKCancel = true;
 	private boolean prevNextFunc = true;
-	
 
 	public void setAskSave(boolean askSave) {
 		this.askSave = askSave;
@@ -93,6 +92,5 @@ public class CustomizeFWin extends CustomizeBaseWin  implements ICustomizeFWin {
 	public boolean isShowOKCancel() {
 		return showOKCancel;
 	}
-
 
 }

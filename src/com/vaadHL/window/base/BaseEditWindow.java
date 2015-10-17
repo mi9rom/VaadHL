@@ -26,6 +26,7 @@ import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadHL.window.customize.ICustomizeEditWin;
 import com.vaadHL.window.customize.ICustomizeEditWin.AutoSaveDiscard;
+import com.vaadHL.window.customize.ICustomizeWin;
 
 /**
  * Base editing form window.
@@ -45,12 +46,14 @@ public abstract class BaseEditWindow extends BaseWindow {
 	protected ActionGroup crudActions;
 
 	public BaseEditWindow(String winId, String caption,
-			IWinPermChecker masterPermChecker, ICustomizeEditWin customize,
+			IWinPermChecker masterPermChecker,
 			MWLaunchMode launchMode, IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, customize, masterPermChecker, appContext);
+		super(winId, caption, (ICustomizeWin) appContext.getWinCustomizerFactory()
+				.getCustomizer(winId), masterPermChecker, appContext);
 		if (!approvedToOpen)
 			return;
-		this.customize = customize;
+		this.customize = (ICustomizeEditWin) appContext.getWinCustomizerFactory()
+				.getCustomizer(winId);
 		this.setReadOnlyWin(readOnlyW);
 		curWinMode = this.launchMode = launchMode;
 

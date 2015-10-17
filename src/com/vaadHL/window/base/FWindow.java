@@ -54,14 +54,15 @@ public abstract class FWindow extends BaseEditWindow {
 
 	private ICustomizeFWin customize;
 
-	public FWindow(String winId, String caption, IWinPermChecker masterPermChecker,
-			ICustomizeFWin customize, MWLaunchMode launchMode,
+	public FWindow(String winId, String caption,
+			IWinPermChecker masterPermChecker, MWLaunchMode launchMode,
 			IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, masterPermChecker, customize, launchMode, appContext,
-				readOnlyW);
+		super(winId, caption, masterPermChecker, launchMode,
+				appContext, readOnlyW);
 		if (!approvedToOpen)
 			return;
-		this.customize = customize;
+		this.customize = (ICustomizeFWin) appContext.getWinCustomizerFactory()
+				.getCustomizer(winId);
 		btCreate = new Button(getI18S("btCreate"));
 		getAction(ActionsIds.AC_CREATE).attach(btCreate);
 		btDelete = new Button(getI18S("btDelete"));

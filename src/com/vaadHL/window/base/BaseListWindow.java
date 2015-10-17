@@ -62,22 +62,29 @@ public abstract class BaseListWindow extends BaseWindow {
 	protected ActionGroup readOnlyActions;
 
 	public BaseListWindow(String winId, String caption,
-			IWinPermChecker masterPermChecker, ICustomizeLWMultiMode customize,
-			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
-		super(winId, caption,
-				(chooseMode == ChoosingMode.NO_CHOOSE) ? customize
-						.getNoChooseMode() : customize.getChooseMode(),
-				masterPermChecker, appContext);
+			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
+			boolean readOnly, IAppContext appContext) {
+		super(
+				winId,
+				caption,
+				(chooseMode == ChoosingMode.NO_CHOOSE) ? ((ICustomizeLWMultiMode) (appContext
+						.getWinCustomizerFactory().getCustomizer(winId)))
+						.getNoChooseMode()
+						: ((ICustomizeLWMultiMode) (appContext
+								.getWinCustomizerFactory().getCustomizer(winId)))
+								.getChooseMode(), masterPermChecker, appContext);
 
 		if (!approvedToOpen)
 			return;
-
+		// ICustomizeLWMultiMode customize,
 		this.chooseMode = chooseMode;
 		this.readOnlyWin = readOnly;
 		if (chooseMode == ChoosingMode.NO_CHOOSE)
-			this.customize = customize.getNoChooseMode();
+			this.customize = ((ICustomizeLWMultiMode) (appContext
+					.getWinCustomizerFactory().getCustomizer(winId))).getNoChooseMode();
 		else
-			this.customize = customize.getChooseMode();
+			this.customize = ((ICustomizeLWMultiMode) (appContext
+					.getWinCustomizerFactory().getCustomizer(winId))).getChooseMode();
 
 		if (isReadOnlyWin()) {
 			readOnlyActions.setEnabled(false);
@@ -96,7 +103,7 @@ public abstract class BaseListWindow extends BaseWindow {
 						deselectAll();
 						;
 					}
-		},true));
+				}, true));
 
 		readOnlyActions = new ActionGroup(200002);
 		Action ac;
@@ -107,7 +114,7 @@ public abstract class BaseListWindow extends BaseWindow {
 			public void run(Action action) {
 				details();
 			}
-		},true);
+		}, true);
 		newActions.put(ac);
 
 		ac = new Action(getAppContext(), ActionsIds.AC_CREATE, new Command() {

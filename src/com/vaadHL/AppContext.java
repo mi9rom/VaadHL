@@ -22,6 +22,7 @@ import com.vaadHL.utl.msgs.Msgs;
 import com.vaadHL.utl.state.IVHLStateLoader;
 import com.vaadHL.utl.state.InMemVHLStateLoader;
 import com.vaadHL.window.base.perm.IWinPermFactory;
+import com.vaadHL.window.customize.IWinCustomizerFactory;
 
 /**
  * Default implementation of the {@link IAppContext} Application context
@@ -34,6 +35,7 @@ public class AppContext implements IAppContext {
 	private I18Sup i18; // internationalization
 	private IVHLStateLoader stateLoader; // saving/restoring states
 	IWinPermFactory winPermFactory;
+	IWinCustomizerFactory winCustomizerFactory;
 
 	public AppContext() {
 
@@ -48,16 +50,19 @@ public class AppContext implements IAppContext {
 		this.winPermFactory = winPermFactory;
 	}
 
+	
+	
 	public AppContext(IMsgs msgs, I18Sup i18, IVHLStateLoader stateLoader,
-			IWinPermFactory winPermFactory) {
+			IWinPermFactory winPermFactory,
+			IWinCustomizerFactory winCustomizerFactory) {
 		super();
 		this.msgs = msgs;
 		this.i18 = i18;
 		this.stateLoader = stateLoader;
 		this.winPermFactory = winPermFactory;
+		this.winCustomizerFactory = winCustomizerFactory;
 	}
 
-	
 	@Override
 	public IMsgs getMsgs() {
 		if (msgs == null) {
@@ -105,5 +110,16 @@ public class AppContext implements IAppContext {
 	public void setWinPermFactory(IWinPermFactory winPermFactory) {
 		this.winPermFactory = winPermFactory;
 	}
+	
+	@Override
+	public IWinCustomizerFactory getWinCustomizerFactory() {
+		return winCustomizerFactory;
+	}
+	
+	@Override
+	public void setWinCustomizerFactory(IWinCustomizerFactory winCustomizerFactory) {
+		this.winCustomizerFactory = winCustomizerFactory;
+	}
+
 
 }

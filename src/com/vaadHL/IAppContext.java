@@ -4,6 +4,7 @@ import com.vaadHL.i18n.I18Sup;
 import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.utl.state.IVHLStateLoader;
 import com.vaadHL.window.base.perm.IWinPermFactory;
+import com.vaadHL.window.customize.IWinCustomizerFactory;
 
 public interface IAppContext {
 	public abstract IMsgs getMsgs();
@@ -21,5 +22,10 @@ public interface IAppContext {
 	public abstract IWinPermFactory getWinPermFactory();
 
 	public abstract void setWinPermFactory(IWinPermFactory winPermFactory);
+	
+	public IWinCustomizerFactory getWinCustomizerFactory();
+
+	public void setWinCustomizerFactory(IWinCustomizerFactory winCustomizerFactory);
+
 
 }

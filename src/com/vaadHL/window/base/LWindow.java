@@ -48,10 +48,10 @@ public class LWindow extends BaseListWindow {
 	protected Button btEdit = null;
 	protected Button btView = null;
 
-	public LWindow(String winId, String caption, IWinPermChecker masterPermChecker,
-			ICustomizeLWMultiMode customize, ChoosingMode chooseMode,
+	public LWindow(String winId, String caption,
+			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
 			boolean readOnly, IAppContext appContext) {
-		super(winId, caption, masterPermChecker, customize, chooseMode, readOnly,
+		super(winId, caption, masterPermChecker, chooseMode, readOnly,
 				appContext);
 		if (approvedToOpen == false)
 			return;

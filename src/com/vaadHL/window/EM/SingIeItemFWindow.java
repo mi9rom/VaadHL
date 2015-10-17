@@ -54,11 +54,10 @@ public abstract class SingIeItemFWindow extends FWindow {
 	protected Object befCreateId;
 
 	public SingIeItemFWindow(String winId, String caption,
-			IWinPermChecker masterPermChecker, ICustomizeFWin cust,
-			MWLaunchMode launchMode, EntityManager em,
-			LazyEntityContainer<?> container, Object itemId,
+			IWinPermChecker masterPermChecker, MWLaunchMode launchMode,
+			EntityManager em, LazyEntityContainer<?> container, Object itemId,
 			IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, masterPermChecker, cust, launchMode, appContext,
+		super(winId, caption, masterPermChecker, launchMode, appContext,
 				readOnlyW);
 		if (!approvedToOpen)
 			return;
