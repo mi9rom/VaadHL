@@ -171,6 +171,11 @@ public class LTabWindow extends LWindow {
 		table.refreshRowCache();
 	}
 
+@Override
+	public void deselectAll() {
+		table.setValue(null);
+	}
+	
 	/**
 	 * Creates table context menu
 	 */
@@ -186,12 +191,12 @@ public class LTabWindow extends LWindow {
 				if (event.getSource().equals(mnRefersh))
 					refresh();
 				else if (event.getSource().equals(mnUnselAll))
-					table.setValue(null);
+
+					deselectAll();
 			}
 		});
-
 	}
-
+			
 	// ------- State handling -------
 
 	/**

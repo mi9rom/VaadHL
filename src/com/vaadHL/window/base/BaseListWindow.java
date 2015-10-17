@@ -30,12 +30,13 @@ import com.vaadin.ui.UI;
 
 /**
  * Base list window. <br>
- * Basic functionality of closing , creating , form calling, customization, filtering, sorting 
+ * Basic functionality of closing , creating , form calling, customization,
+ * filtering, sorting
  * 
  * @author Miroslaw Romaniuk
  *
  */
-public abstract class BaseListWindow extends BaseWindow{
+public abstract class BaseListWindow extends BaseWindow {
 
 	private static final long serialVersionUID = 7671927662680629987L;
 
@@ -355,6 +356,14 @@ public abstract class BaseListWindow extends BaseWindow{
 
 		public CloseCauseEnum cause;
 		public Object addInfo;
+	}
+
+	/**
+	 * Remove all selecions
+	 * 
+	 */
+	public void deselectAll() {
+
 	}
 
 	// ------- State handling -------
