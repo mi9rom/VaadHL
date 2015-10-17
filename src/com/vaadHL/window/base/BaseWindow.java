@@ -27,6 +27,7 @@ import com.vaadHL.utl.state.IStateVHL;
 import com.vaadHL.utl.state.ScreenInfo;
 import com.vaadHL.utl.state.VHLState;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.base.perm.MasterSlavePermChecker;
 import com.vaadHL.window.customize.ICustomizeWin;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -50,6 +51,8 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	private static final long serialVersionUID = 3460211791860318900L;
 	private String winId;
 	protected IWinPermChecker permChecker;
+	
+
 	private MenuBar menuBar; // main, window menu bar
 
 	/**
@@ -68,14 +71,34 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	 *            the window unique ID
 	 * @param caption
 	 *            the part of the title {@link BaseWindow#makeTitle makeTitle}
-	 * @param permChecker
+	 * @param masterPermChecker
+	 *            master permission checker, null - don't exists
 	 */
 	public BaseWindow(String winId, String caption, ICustomizeWin customize,
-			IWinPermChecker permChecker, IAppContext appContext) {
+			IWinPermChecker masterPermChecker, IAppContext appContext) {
 		super();
 		this.appContext = appContext;
 		this.winId = winId;
-		this.permChecker = permChecker;
+		if (masterPermChecker == null) {
+
+			IWinPermChecker pc = appContext.getWinPermFactory().getChecker(
+					winId);
+			if (pc == null) {
+				approvedToOpen = false;
+				throw new NullPointerException(
+						"appContext shoud return non empty permission checker or master chacker != null");
+			}
+			permChecker = pc;
+		} else // masterPermChecker is not null
+		{
+			IWinPermChecker pc = appContext.getWinPermFactory().getChecker(
+					winId);
+			if (pc == null)
+				permChecker = pc;
+			else
+				permChecker = new MasterSlavePermChecker(masterPermChecker, pc);
+		}
+
 		this.customize = customize;
 		setCaption(makeTitle(winId, caption));
 
@@ -206,7 +229,7 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	 */
 	public boolean canShow() {
 		if (permChecker != null)
-			if (!permChecker.canOpen(winId))
+			if (!permChecker.canOpen())
 				return false;
 		return true;
 	}
@@ -331,7 +354,7 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 	 */
 	protected void addActionsAndChkPerm(ActionGroup ag) {
 		getActions().put(ag);
-		ag.setPermisions(getWinId(), permChecker);
+		ag.setPermisions(permChecker);
 	}
 
 	public IAppContext getAppContext() {
@@ -471,5 +494,13 @@ public abstract class BaseWindow extends Window implements IStateVHL {
 				}, true));
 
 		addActionsAndChkPerm(newActions);
+	}
+	
+	public IWinPermChecker getPermChecker() {
+		return permChecker;
+	}
+
+	public void setPermChecker(IWinPermChecker permChecker) {
+		this.permChecker = permChecker;
 	}
 }

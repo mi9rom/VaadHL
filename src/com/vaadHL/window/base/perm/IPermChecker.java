@@ -17,18 +17,30 @@ package com.vaadHL.window.base.perm;
 
 /**
  * General window checking interface
+ * 
  * @author Miroslaw Romaniuk
  *
  */
 public interface IPermChecker {
 	/**
-	 * Is there permission for the action
+	 * Is there permission for the action. if permission cannot be found return
+	 * false
 	 * 
-	 * @param winId
-	 *            the window identifier
 	 * @param actionId
 	 *            the id of the action to check
 	 * @return
 	 */
-	public boolean canDo(String winId, int actionId);
+	public boolean canDo(int actionId);
+	
+	/**
+	 * Is there permission for the action. if permission cannot be found returns
+	 * defValue
+	 * 
+	 * @param defValue the value returned the permission cannot be found
+	 * @return
+	 */
+	public boolean canDo(int actionId, boolean defValue);
+
+	
+	
 }

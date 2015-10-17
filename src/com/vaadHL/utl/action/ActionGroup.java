@@ -219,18 +219,18 @@ public class ActionGroup implements IActionsManipulate {
 	 * @param perm
 	 *            the permission checker
 	 */
-	public void setPermisions(String winId, IPermChecker perm) {
+	public void setPermisions(IPermChecker perm) {
 		for (Object o : content.values()) {
 			if (o instanceof Action) {
 				Action a = (Action) o;
 				if (a.isPermChecking()) {
 					if (perm != null)
-						a.setEnabled(perm.canDo(winId, a.getId()));
+						a.setEnabled(perm.canDo(a.getId()));
 					else
 						a.setEnabled(true);
 				}
 			} else if (o instanceof ActionGroup)
-				((ActionGroup) o).setPermisions(winId, perm);
+				((ActionGroup) o).setPermisions(perm);
 		}
 	}
 

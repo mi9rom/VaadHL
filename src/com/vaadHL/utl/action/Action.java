@@ -55,9 +55,7 @@ public class Action implements IActionsManipulate {
 	boolean enabled = true;
 	boolean visible = true;
 	IAppContext appContext;
-	boolean permChecking=true;
-
-	
+	boolean permChecking = true;
 
 	public Action(IAppContext appContext, int actionId) {
 		this(appContext, actionId, null);
@@ -69,15 +67,23 @@ public class Action implements IActionsManipulate {
 		this.command = command;
 	}
 
-	public Action(IAppContext appContext, int actionId, Command command ,boolean enabled) {
+	/**
+	 * Creates an action without permission checking. Only internal state.
+	 * 
+	 * @param appContext
+	 * @param actionId
+	 * @param command
+	 * @param enabled
+	 */
+	public Action(IAppContext appContext, int actionId, Command command,
+			boolean enabled) {
 		this.id = actionId;
 		this.appContext = appContext;
 		this.command = command;
 		this.enabled = enabled;
 		this.permChecking = false;
 	}
-	
-	
+
 	public Action(IAppContext appContext, int actionId, Command command,
 			Object... objs) {
 		this(appContext, actionId, command, true, true, true, objs);
@@ -245,7 +251,7 @@ public class Action implements IActionsManipulate {
 		if (force == false && this.enabled == enabled)
 			return; // no change
 		this.enabled = enabled;
-		
+
 		if (attached == null)
 			return;
 		if (changeAttached) {
@@ -269,7 +275,7 @@ public class Action implements IActionsManipulate {
 	 * @param enabled
 	 */
 	protected void setEnabled(Object o, boolean enabled) {
-		
+
 		if (o instanceof AbstractComponent) {
 			((AbstractComponent) o).setEnabled(enabled);
 		} else if (o instanceof MenuItem) {
@@ -384,5 +390,5 @@ public class Action implements IActionsManipulate {
 	public boolean isPermChecking() {
 		return permChecking;
 	}
-	
+
 }

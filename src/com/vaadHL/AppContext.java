@@ -15,14 +15,13 @@
 
 package com.vaadHL;
 
-import java.util.Locale;
-
 import com.vaadHL.i18n.I18Sup;
 import com.vaadHL.i18n.VaadHLi18n;
 import com.vaadHL.utl.msgs.IMsgs;
 import com.vaadHL.utl.msgs.Msgs;
 import com.vaadHL.utl.state.IVHLStateLoader;
 import com.vaadHL.utl.state.InMemVHLStateLoader;
+import com.vaadHL.window.base.perm.IWinPermFactory;
 
 /**
  * Default implementation of the {@link IAppContext} Application context
@@ -34,22 +33,31 @@ public class AppContext implements IAppContext {
 	private IMsgs msgs; // messages
 	private I18Sup i18; // internationalization
 	private IVHLStateLoader stateLoader; // saving/restoring states
+	IWinPermFactory winPermFactory;
 
 	public AppContext() {
 
 	}
+	
+	public AppContext(I18Sup i18) {
+		setI18(i18);
+	}
+	
+	public AppContext(I18Sup i18, IWinPermFactory winPermFactory) {
+		setI18(i18);
+		this.winPermFactory = winPermFactory;
+	}
 
-	public AppContext(IMsgs msgs, I18Sup i18, IVHLStateLoader stateLoader) {
+	public AppContext(IMsgs msgs, I18Sup i18, IVHLStateLoader stateLoader,
+			IWinPermFactory winPermFactory) {
 		super();
 		this.msgs = msgs;
 		this.i18 = i18;
 		this.stateLoader = stateLoader;
+		this.winPermFactory = winPermFactory;
 	}
 
-	public AppContext(I18Sup i18) {
-		setI18(i18);
-	}
-
+	
 	@Override
 	public IMsgs getMsgs() {
 		if (msgs == null) {
@@ -86,6 +94,16 @@ public class AppContext implements IAppContext {
 	@Override
 	public void setStateLoader(IVHLStateLoader stateLoader) {
 		this.stateLoader = stateLoader;
+	}
+
+	@Override
+	public IWinPermFactory getWinPermFactory() {
+		return winPermFactory;
+	}
+
+	@Override
+	public void setWinPermFactory(IWinPermFactory winPermFactory) {
+		this.winPermFactory = winPermFactory;
 	}
 
 }

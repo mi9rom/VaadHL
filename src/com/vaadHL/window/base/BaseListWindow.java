@@ -62,12 +62,12 @@ public abstract class BaseListWindow extends BaseWindow {
 	protected ActionGroup readOnlyActions;
 
 	public BaseListWindow(String winId, String caption,
-			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
+			IWinPermChecker masterPermChecker, ICustomizeLWMultiMode customize,
 			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
 		super(winId, caption,
 				(chooseMode == ChoosingMode.NO_CHOOSE) ? customize
 						.getNoChooseMode() : customize.getChooseMode(),
-				permChecker, appContext);
+				masterPermChecker, appContext);
 
 		if (!approvedToOpen)
 			return;

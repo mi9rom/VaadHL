@@ -29,7 +29,7 @@ public interface IWinPermChecker extends IPermChecker {
 	 * @param winId
 	 *            the window identifier
 	 */
-	public boolean canOpen(String winId);
+	public boolean canOpen();
 
 	/**
 	 * Is there permission for editing in the window.
@@ -38,7 +38,7 @@ public interface IWinPermChecker extends IPermChecker {
 	 *            the window identifier
 	 * @return
 	 */
-	public boolean canEdit(String winId);
+	public boolean canEdit();
 
 	/**
 	 * Is there permission for creating in the window.
@@ -47,7 +47,7 @@ public interface IWinPermChecker extends IPermChecker {
 	 *            the window identifier
 	 * @return
 	 */
-	public boolean canCreate(String winId);
+	public boolean canCreate();
 
 	/**
 	 * Is there permission for deleting in the window.
@@ -56,6 +56,6 @@ public interface IWinPermChecker extends IPermChecker {
 	 *            the window identifier
 	 * @return
 	 */
-	public boolean canDelete(String winId);
+	public boolean canDelete();
 
 }

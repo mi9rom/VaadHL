@@ -45,9 +45,9 @@ public abstract class BaseEditWindow extends BaseWindow {
 	protected ActionGroup crudActions;
 
 	public BaseEditWindow(String winId, String caption,
-			IWinPermChecker permChecker, ICustomizeEditWin customize,
+			IWinPermChecker masterPermChecker, ICustomizeEditWin customize,
 			MWLaunchMode launchMode, IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, customize, permChecker, appContext);
+		super(winId, caption, customize, masterPermChecker, appContext);
 		if (!approvedToOpen)
 			return;
 		this.customize = customize;
@@ -167,7 +167,7 @@ public abstract class BaseEditWindow extends BaseWindow {
 		if (launchMode == MWLaunchMode.VIEW_ONLY)
 			return false;
 		if (permChecker != null)
-			return (permChecker.canEdit(getWinId()));
+			return (permChecker.canEdit());
 		return true;
 	}
 
@@ -175,7 +175,7 @@ public abstract class BaseEditWindow extends BaseWindow {
 		if (launchMode == MWLaunchMode.VIEW_ONLY)
 			return false;
 		if (permChecker != null)
-			return (permChecker.canDelete(getWinId()));
+			return (permChecker.canDelete());
 		return true;
 	}
 
@@ -183,7 +183,7 @@ public abstract class BaseEditWindow extends BaseWindow {
 		if (launchMode == MWLaunchMode.VIEW_ONLY)
 			return false;
 		if (permChecker != null)
-			return (permChecker.canCreate(getWinId()));
+			return (permChecker.canCreate());
 		return true;
 	}
 

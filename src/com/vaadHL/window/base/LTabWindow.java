@@ -26,9 +26,9 @@ public class LTabWindow extends LWindow {
 	protected Table table;
 	protected TableHelper tableHelper;
 	public LTabWindow(String winId, String caption,
-			IWinPermChecker permChecker, ICustomizeLWMultiMode customize,
+			IWinPermChecker masterPermChecker, ICustomizeLWMultiMode customize,
 			ChoosingMode chooseMode, boolean readOnly, IAppContext appContext) {
-		super(winId, caption, permChecker, customize, chooseMode, readOnly,
+		super(winId, caption, masterPermChecker, customize, chooseMode, readOnly,
 				appContext);
 
 		if (approvedToOpen == false)

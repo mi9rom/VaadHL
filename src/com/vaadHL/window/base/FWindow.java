@@ -54,10 +54,10 @@ public abstract class FWindow extends BaseEditWindow {
 
 	private ICustomizeFWin customize;
 
-	public FWindow(String winId, String caption, IWinPermChecker permChecker,
+	public FWindow(String winId, String caption, IWinPermChecker masterPermChecker,
 			ICustomizeFWin customize, MWLaunchMode launchMode,
 			IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, permChecker, customize, launchMode, appContext,
+		super(winId, caption, masterPermChecker, customize, launchMode, appContext,
 				readOnlyW);
 		if (!approvedToOpen)
 			return;
