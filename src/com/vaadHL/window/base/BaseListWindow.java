@@ -63,28 +63,32 @@ public abstract class BaseListWindow extends BaseWindow {
 
 	public BaseListWindow(String winId, String caption,
 			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
-			boolean readOnly, IAppContext appContext) {
+			boolean readOnly, IAppContext appContext,
+			ICustomizeLWMultiMode forceCustomize) {
 		super(
 				winId,
 				caption,
-				(chooseMode == ChoosingMode.NO_CHOOSE) ? ((ICustomizeLWMultiMode) (appContext
+				(chooseMode == ChoosingMode.NO_CHOOSE) ? (forceCustomize == null) ? ((ICustomizeLWMultiMode) (appContext
 						.getWinCustomizerFactory().getCustomizer(winId)))
-						.getNoChooseMode()
-						: ((ICustomizeLWMultiMode) (appContext
+						.getNoChooseMode() : forceCustomize.getNoChooseMode()
+						: (forceCustomize == null) ? ((ICustomizeLWMultiMode) (appContext
 								.getWinCustomizerFactory().getCustomizer(winId)))
-								.getChooseMode(), masterPermChecker, appContext);
+								.getChooseMode()
+								: forceCustomize.getChooseMode(),
+				masterPermChecker, appContext);
 
 		if (!approvedToOpen)
 			return;
-		// ICustomizeLWMultiMode customize,
+
 		this.chooseMode = chooseMode;
 		this.readOnlyWin = readOnly;
+		ICustomizeLWMultiMode lcust = (forceCustomize == null) ? ((ICustomizeLWMultiMode) (appContext
+				.getWinCustomizerFactory().getCustomizer(winId)))
+				: forceCustomize;
 		if (chooseMode == ChoosingMode.NO_CHOOSE)
-			this.customize = ((ICustomizeLWMultiMode) (appContext
-					.getWinCustomizerFactory().getCustomizer(winId))).getNoChooseMode();
+			this.customize = lcust.getNoChooseMode();
 		else
-			this.customize = ((ICustomizeLWMultiMode) (appContext
-					.getWinCustomizerFactory().getCustomizer(winId))).getChooseMode();
+			this.customize = lcust.getChooseMode();
 
 		if (isReadOnlyWin()) {
 			readOnlyActions.setEnabled(false);

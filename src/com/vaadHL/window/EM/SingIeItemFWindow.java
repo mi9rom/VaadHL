@@ -17,9 +17,7 @@
 package com.vaadHL.window.EM;
 
 import javax.persistence.EntityManager;
-
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
-
 import com.vaadHL.IAppContext;
 import com.vaadHL.window.base.FWindow;
 import com.vaadHL.window.base.MWLaunchMode;
@@ -56,9 +54,10 @@ public abstract class SingIeItemFWindow extends FWindow {
 	public SingIeItemFWindow(String winId, String caption,
 			IWinPermChecker masterPermChecker, MWLaunchMode launchMode,
 			EntityManager em, LazyEntityContainer<?> container, Object itemId,
-			IAppContext appContext, boolean readOnlyW) {
+			IAppContext appContext, boolean readOnlyW,
+			ICustomizeFWin forceCustomize) {
 		super(winId, caption, masterPermChecker, launchMode, appContext,
-				readOnlyW);
+				readOnlyW, forceCustomize);
 		if (!approvedToOpen)
 			return;
 		this.em = em;

@@ -22,6 +22,7 @@ import com.vaadHL.utl.action.Action.Command;
 import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
+import com.vaadHL.window.customize.ICustomizeEditWin;
 import com.vaadHL.window.customize.ICustomizeFWin;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -56,13 +57,15 @@ public abstract class FWindow extends BaseEditWindow {
 
 	public FWindow(String winId, String caption,
 			IWinPermChecker masterPermChecker, MWLaunchMode launchMode,
-			IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, masterPermChecker, launchMode,
-				appContext, readOnlyW);
+			IAppContext appContext, boolean readOnlyW,
+			ICustomizeFWin forceCustomize) {
+		super(winId, caption, masterPermChecker, launchMode, appContext,
+				readOnlyW, forceCustomize);
 		if (!approvedToOpen)
 			return;
-		this.customize = (ICustomizeFWin) appContext.getWinCustomizerFactory()
-				.getCustomizer(winId);
+		this.customize = forceCustomize == null ? (ICustomizeFWin) appContext
+				.getWinCustomizerFactory().getCustomizer(winId)
+				: forceCustomize;
 		btCreate = new Button(getI18S("btCreate"));
 		getAction(ActionsIds.AC_CREATE).attach(btCreate);
 		btDelete = new Button(getI18S("btDelete"));

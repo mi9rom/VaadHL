@@ -38,9 +38,10 @@ public class LEMWindow extends LTabWindow {
 
 	public LEMWindow(String winId, String caption,
 			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
-			boolean readOnly, EntityManager em, IAppContext appContext) {
-		super(winId, caption, masterPermChecker,  chooseMode,
-				readOnly, appContext);
+			boolean readOnly, EntityManager em, IAppContext appContext,
+			ICustomizeLWMultiMode forceCustomize) {
+		super(winId, caption, masterPermChecker, chooseMode, readOnly,
+				appContext, forceCustomize);
 		this.em = em;
 		if (approvedToOpen == false)
 			return;

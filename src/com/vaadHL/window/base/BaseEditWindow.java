@@ -25,6 +25,7 @@ import com.vaadHL.utl.action.ActionGroup;
 import com.vaadHL.utl.action.ActionsIds;
 import com.vaadHL.window.base.perm.IWinPermChecker;
 import com.vaadHL.window.customize.ICustomizeEditWin;
+import com.vaadHL.window.customize.ICustomizeLWMultiMode;
 import com.vaadHL.window.customize.ICustomizeEditWin.AutoSaveDiscard;
 import com.vaadHL.window.customize.ICustomizeWin;
 
@@ -46,14 +47,19 @@ public abstract class BaseEditWindow extends BaseWindow {
 	protected ActionGroup crudActions;
 
 	public BaseEditWindow(String winId, String caption,
-			IWinPermChecker masterPermChecker,
-			MWLaunchMode launchMode, IAppContext appContext, boolean readOnlyW) {
-		super(winId, caption, (ICustomizeWin) appContext.getWinCustomizerFactory()
-				.getCustomizer(winId), masterPermChecker, appContext);
+			IWinPermChecker masterPermChecker, MWLaunchMode launchMode,
+			IAppContext appContext, boolean readOnlyW,
+			ICustomizeEditWin forceCustomize) {
+		super(winId, caption,
+				forceCustomize == null ? (ICustomizeWin) appContext
+						.getWinCustomizerFactory().getCustomizer(winId)
+						:  forceCustomize, masterPermChecker,
+				appContext);
 		if (!approvedToOpen)
 			return;
-		this.customize = (ICustomizeEditWin) appContext.getWinCustomizerFactory()
-				.getCustomizer(winId);
+		this.customize = forceCustomize == null ? (ICustomizeEditWin) appContext
+				.getWinCustomizerFactory().getCustomizer(winId)
+				:  forceCustomize;
 		this.setReadOnlyWin(readOnlyW);
 		curWinMode = this.launchMode = launchMode;
 

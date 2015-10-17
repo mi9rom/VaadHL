@@ -50,9 +50,10 @@ public class LWindow extends BaseListWindow {
 
 	public LWindow(String winId, String caption,
 			IWinPermChecker masterPermChecker, ChoosingMode chooseMode,
-			boolean readOnly, IAppContext appContext) {
+			boolean readOnly, IAppContext appContext,
+			ICustomizeLWMultiMode forceCustomize) {
 		super(winId, caption, masterPermChecker, chooseMode, readOnly,
-				appContext);
+				appContext, forceCustomize);
 		if (approvedToOpen == false)
 			return;
 
