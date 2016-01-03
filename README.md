@@ -22,4 +22,4 @@ Main features:
   * Apache 2.0 license.
 
 
-See [the demo](http://vaadhl.mromaniuk.com) The source code of the demo you can find [here](http://github.com/mi9rom/VaadHLDemo).
+See [the demo](http://vaadhldemo.mromaniuk.me) The source code of the demo you can find [here](http://github.com/mi9rom/VaadHLDemo).
